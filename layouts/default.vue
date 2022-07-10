@@ -77,13 +77,13 @@ export default {
       items: [
         {
           icon: "mdi-apps",
-          title: "Welcome",
+          title: "Tienda",
           to: "/",
         },
         {
           icon: "mdi-chart-bubble",
-          title: "Inspire",
-          to: "/inspire",
+          title: "Catalogo",
+          to: "/catalogo",
         },
       ],
       miniVariant: false,
