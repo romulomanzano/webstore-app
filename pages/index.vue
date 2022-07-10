@@ -28,60 +28,61 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      descriptionLimit: 60,
-      entries: [],
-      isLoading: false,
-      location: null,
-      search: null,
-    }),
+export default {
+  data: () => ({
+    descriptionLimit: 60,
+    entries: [],
+    isLoading: false,
+    location: null,
+    search: null,
+  }),
 
-    computed: {
-      fields () {
-        if (!this.location) return []
+  computed: {
+    fields() {
+      if (!this.location) return [];
 
-        return Object.keys(this.location).map(key => {
-          return {
-            key,
-            value: this.location[key] || 'n/a',
-          }
-        })
-      },
-      items () {
-        return this.entries.map(entry => {
-          const Description = entry.Description.length > this.descriptionLimit
-            ? entry.Description.slice(0, this.descriptionLimit) + '...'
-            : entry.Description
-
-          return Object.assign({}, entry, { Description })
-        })
-      },
+      return Object.keys(this.location).map((key) => {
+        return {
+          key,
+          value: this.location[key] || "n/a",
+        };
+      });
     },
+    items() {
+      return this.entries.map((entry) => {
+        const Description =
+          entry.Description.length > this.descriptionLimit
+            ? entry.Description.slice(0, this.descriptionLimit) + "..."
+            : entry.Description;
 
-    watch: {
-      search (val) {
-        // Items have already been loaded
-        if (this.items.length > 0) return
-
-        // Items have already been requested
-        if (this.isLoading) return
-
-        this.isLoading = true
-
-        // Lazily load input items
-        fetch('https://api.publicapis.org/entries')
-          .then(res => res.json())
-          .then(res => {
-            const { count, entries } = res
-            this.count = count
-            this.entries = entries
-          })
-          .catch(err => {
-            console.log(err)
-          })
-          .finally(() => (this.isLoading = false))
-      },
+        return Object.assign({}, entry, { Description });
+      });
     },
-  }
+  },
+
+  watch: {
+    search(val) {
+      // Items have already been loaded
+      if (this.items.length > 0) return;
+
+      // Items have already been requested
+      if (this.isLoading) return;
+
+      this.isLoading = true;
+
+      // Lazily load input items
+      fetch("https://api.publicapis.org/entries")
+        .then((res) => res.json())
+        .then((res) => {
+          const { count, entries } = res;
+          this.count = count;
+          this.entries = entries;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => (this.isLoading = false));
+    },
+  },
+};
 </script>
