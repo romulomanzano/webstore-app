@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="form" lazy-validation>
       <v-text-field
         v-model="storeName"
         label="Store Name"
@@ -29,8 +29,20 @@
 
 <script>
 export default {
+    head() {
+        return {
+        script: [
+            {
+            src:
+                'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'
+            }
+        ],
+        },
+    },
   data: () => ({
     descriptionLimit: 60,
+    additionalInfo: "",
+    storeName: "",
     entries: [],
     isLoading: false,
     location: null,
@@ -51,9 +63,9 @@ export default {
     items() {
       return this.entries.map((entry) => {
         const Description =
-          entry.Description.length > this.descriptionLimit
-            ? entry.Description.slice(0, this.descriptionLimit) + "..."
-            : entry.Description;
+          entry.description.length > this.descriptionLimit
+            ? entry.description.slice(0, this.descriptionLimit) + "..."
+            : entry.description;
 
         return Object.assign({}, entry, { Description });
       });
@@ -71,12 +83,16 @@ export default {
       this.isLoading = true;
 
       // Lazily load input items
-      fetch("https://api.publicapis.org/entries")
-        .then((res) => res.json())
+      this.$axios
+        .get(
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
+            val +
+            "&language=es&types=%28cities%29&key=" +
+            process.env.GOOGLE_API_KEY,
+          { headers: { "Access-Control-Allow-Origin": "*" } }
+        )
         .then((res) => {
-          const { count, entries } = res;
-          this.count = count;
-          this.entries = entries;
+          this.entries = res.data.predictions;
         })
         .catch((err) => {
           console.log(err);
