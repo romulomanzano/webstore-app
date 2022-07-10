@@ -45,7 +45,7 @@ export default {
   modules: ["@nuxtjs/i18n", "@nuxtjs/firebase", "@nuxtjs/axios"],
   axios: {
     proxyHeaders: false,
-    credentials: false
+    credentials: false,
   },
   firebase: {
     // options
