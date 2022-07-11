@@ -8,6 +8,12 @@
       ></v-text-field>
       <v-textarea v-model="additionalInfo" auto-grow filled label="Info">
       </v-textarea>
+      <v-text-field
+        v-model="locationName"
+        label="Location"
+        required
+        id="autocomplete"
+      ></v-text-field>
       <v-autocomplete
         v-model="location"
         :items="items"
@@ -28,20 +34,12 @@
 </template>
 
 <script>
+
 export default {
-    head() {
-        return {
-        script: [
-            {
-            src:
-                'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'
-            }
-        ],
-        },
-    },
   data: () => ({
     descriptionLimit: 60,
     additionalInfo: "",
+    locationName: "",
     storeName: "",
     entries: [],
     isLoading: false,
@@ -71,34 +69,13 @@ export default {
       });
     },
   },
+  mounted() {
+    const options = {
+      types: ["(cities)"],
+    };
 
-  watch: {
-    search(val) {
-      // Items have already been loaded
-      if (this.items.length > 0) return;
-
-      // Items have already been requested
-      if (this.isLoading) return;
-
-      this.isLoading = true;
-
-      // Lazily load input items
-      this.$axios
-        .get(
-          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
-            val +
-            "&language=es&types=%28cities%29&key=" +
-            process.env.GOOGLE_API_KEY,
-          { headers: { "Access-Control-Allow-Origin": "*" } }
-        )
-        .then((res) => {
-          this.entries = res.data.predictions;
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => (this.isLoading = false));
-    },
+    const input = document.getElementById("autocomplete");
+    new google.maps.places.Autocomplete(input, options);
   },
 };
 </script>

@@ -21,6 +21,14 @@ export default {
       { name: "format-detection", content: "telephone=no" },
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    script: [
+      {
+        type: "module",
+        src:
+          "https://maps.googleapis.com/maps/api/js?libraries=places&key=" +
+          process.env.GOOGLE_API_KEY,
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
