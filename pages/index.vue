@@ -14,21 +14,6 @@
         required
         id="autocomplete"
       ></v-text-field>
-      <v-autocomplete
-        v-model="location"
-        :items="items"
-        :loading="isLoading"
-        :search-input.sync="search"
-        color="white"
-        hide-no-data
-        hide-selected
-        item-text="Description"
-        item-value="API"
-        label="Location"
-        placeholder="Start typing to Search"
-        prepend-icon="mdi-database-search"
-        return-object
-      ></v-autocomplete>
     </v-form>
   </v-main>
 </template>
@@ -45,7 +30,11 @@ export default {
     location: null,
     search: null,
   }),
-
+  watch: {
+    locationName() {
+      console.log(this.locationName);
+    }
+  },
   computed: {
     fields() {
       if (!this.location) return [];
@@ -72,7 +61,6 @@ export default {
     const options = {
       types: ["(cities)"],
     };
-
     const input = document.getElementById("autocomplete");
     new google.maps.places.Autocomplete(input, options);
   },
