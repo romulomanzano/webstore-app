@@ -23,10 +23,11 @@ export default {
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     script: [
       {
-        type: "module",
         src:
-          "https://maps.googleapis.com/maps/api/js?libraries=places&key=" +
-          process.env.GOOGLE_API_KEY,
+        "https://maps.googleapis.com/maps/api/js?libraries=places&key=" +
+        process.env.GOOGLE_API_KEY,
+        async: true,
+        defer: true,
       },
     ],
   },
