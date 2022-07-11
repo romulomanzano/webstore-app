@@ -33,7 +33,7 @@ export default {
   watch: {
     locationName() {
       console.log(this.locationName);
-    }
+    },
   },
   computed: {
     fields() {
