@@ -9,7 +9,7 @@
       <v-textarea v-model="additionalInfo" auto-grow filled label="Info">
       </v-textarea>
       <v-text-field
-        v-model="locationName"
+        v-model="city"
         label="Location"
         required
         id="autocomplete"
@@ -19,21 +19,31 @@
 </template>
 
 <script>
+
 export default {
   data: () => ({
     descriptionLimit: 60,
     additionalInfo: "",
+    city: "",
     locationName: "",
     storeName: "",
     entries: [],
     isLoading: false,
     location: null,
     search: null,
+    autocomplete: null,
   }),
   watch: {
     locationName() {
       console.log(this.locationName);
     },
+  },
+  methods: {
+    changed() {
+      let place = this.autocomplete.getPlace();
+      console.log(place)
+      this.city = place.formatted_address;
+    }
   },
   computed: {
     fields() {
@@ -61,8 +71,9 @@ export default {
     const options = {
       types: ["(cities)"],
     };
-    const input = document.getElementById("autocomplete");
-    new google.maps.places.Autocomplete(input, options);
+    let input = document.getElementById("autocomplete");
+    this.autocomplete = new google.maps.places.Autocomplete(input, options);
+    this.autocomplete.addListener('place_changed', this.changed);
   },
 };
 </script>
