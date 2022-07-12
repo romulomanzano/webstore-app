@@ -19,13 +19,11 @@
 </template>
 
 <script>
-
 export default {
   data: () => ({
     descriptionLimit: 60,
     additionalInfo: "",
     city: "",
-    locationName: "",
     storeName: "",
     entries: [],
     isLoading: false,
@@ -33,17 +31,11 @@ export default {
     search: null,
     autocomplete: null,
   }),
-  watch: {
-    locationName() {
-      console.log(this.locationName);
-    },
-  },
   methods: {
     changed() {
       let place = this.autocomplete.getPlace();
-      console.log(place)
       this.city = place.formatted_address;
-    }
+    },
   },
   computed: {
     fields() {
@@ -73,7 +65,7 @@ export default {
     };
     let input = document.getElementById("autocomplete");
     this.autocomplete = new google.maps.places.Autocomplete(input, options);
-    this.autocomplete.addListener('place_changed', this.changed);
+    this.autocomplete.addListener("place_changed", this.changed);
   },
 };
 </script>
