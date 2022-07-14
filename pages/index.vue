@@ -55,9 +55,15 @@ export default {
       this.city = place.formatted_address;
     },
     customFilter(item, queryText, itemText) {
-      const textOne = item.moneda.toLocaleLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+      const textOne = item.moneda
+        .toLocaleLowerCase()
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "");
       const textTwo = item.codigo_iso.toLocaleLowerCase();
-      const searchText = queryText.toLocaleLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+      const searchText = queryText
+        .toLocaleLowerCase()
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "");
       return (
         textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
       );

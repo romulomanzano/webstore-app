@@ -1137,8 +1137,7 @@ export const state = () => ({
   ],
 });
 export const getters = {
-    currencies(state) {
-      return state.currencies;
-    },
-  };
-  
+  currencies(state) {
+    return state.currencies;
+  },
+};
