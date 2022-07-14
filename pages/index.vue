@@ -3,26 +3,43 @@
     <v-form ref="form" lazy-validation>
       <v-text-field
         v-model="storeName"
-        label="Store Name"
+        label="Nombre de la Tienda"
         required
       ></v-text-field>
-      <v-textarea v-model="additionalInfo" auto-grow filled label="Info">
+      <v-textarea v-model="additionalInfo" auto-grow filled label="Descripción">
       </v-textarea>
       <v-text-field
         v-model="city"
-        label="Location"
+        label="Ciudad"
         required
         id="autocomplete"
       ></v-text-field>
+      <v-autocomplete
+        v-model="currency"
+        :items="currencies"
+        :filter="customFilter"
+        color="white"
+        hide-no-data
+        hide-selected
+        item-text="moneda"
+        item-value="codigo_iso"
+        label="Moneda"
+        placeholder="Buscar"
+        return-object
+      ></v-autocomplete>
     </v-form>
   </v-main>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data: () => ({
     descriptionLimit: 60,
     additionalInfo: "",
+    currency: "",
+    currencySearch: "",
     city: "",
     storeName: "",
     entries: [],
@@ -31,13 +48,25 @@ export default {
     search: null,
     autocomplete: null,
   }),
+
   methods: {
     changed() {
       let place = this.autocomplete.getPlace();
       this.city = place.formatted_address;
     },
+    customFilter(item, queryText, itemText) {
+      const textOne = item.moneda.toLocaleLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+      const textTwo = item.codigo_iso.toLocaleLowerCase();
+      const searchText = queryText.toLocaleLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+      return (
+        textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
+      );
+    },
   },
   computed: {
+    ...mapGetters({
+      currencies: "currencies/currencies",
+    }),
     fields() {
       if (!this.location) return [];
 

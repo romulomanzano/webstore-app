@@ -24,7 +24,7 @@ export default {
     script: [
       {
         src:
-          "https://maps.googleapis.com/maps/api/js?libraries=places&key=" +
+          "https://maps.googleapis.com/maps/api/js?language=es&libraries=places&key=" +
           process.env.GOOGLE_API_KEY,
         async: true,
         defer: true,
