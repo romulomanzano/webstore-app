@@ -1,8 +1,10 @@
 <template>
   <v-main>
     <v-form ref="form" lazy-validation>
-      <v-row class="justify-center"><notifications group="notifications" position="top" /></v-row>
-      
+      <v-row class="justify-center"
+        ><notifications group="notifications" position="top"
+      /></v-row>
+
       <v-text-field
         v-model="storeName"
         label="Nombre de la Tienda"
@@ -69,6 +71,8 @@ export default {
     storeName: "",
     cityAutocomplete: null,
     storeDomain: "",
+    storeDomainBase: "",
+    storeDomainBaseRank: null
   }),
   validations: {
     storeName: {
@@ -113,13 +117,31 @@ export default {
       }
     },
     updateDomain() {
-      this.storeDomain = this.storeName
+      this.storeDomainBase = this.storeName
         .replace(/[^a-z0-9 -]/gi, "")
         .trim()
         .replace(/\s+/g, "-")
         .toLocaleLowerCase()
         .normalize("NFD")
         .replace(/\p{Diacritic}/gu, "");
+
+      //search if exists in DB
+      const similarStores = this.$fire.firestore
+        .collection("stores")
+        .where("storeDomainBase", "==", this.storeDomain)
+        .orderBy("storeDomain", "desc")
+        .limit(1)
+        .get();
+      if (similarStores.docs.length > 0) {
+        const doc = similarStores.docs[0];
+        //todo: remove!
+        console.log("Document data:", doc.data());
+        this.storeDomainBaseRank = doc["storeDomainBaseRank"]+1
+        this.storeDomain = this.storeDomain + "-" + String(this.storeDomainBaseRank)
+      } else {
+        this.storeDomainBaseRank = 1;
+        this.storeDomain = this.storeDomainBase;
+      }
     },
     customFilter(item, queryText, itemText) {
       const textOne = item.moneda
@@ -135,13 +157,14 @@ export default {
         textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
       );
     },
+    saveStore() {},
   },
   computed: {
     ...mapGetters({
       currencies: "currencies/currencies",
     }),
     storeUrl() {
-      return (this.storeDomain !== "" && !this.$v.storeName.$error)
+      return this.storeDomain !== "" && !this.$v.storeName.$error
         ? "https://" + this.storeDomain + ".web.tienda"
         : "";
     },

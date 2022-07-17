@@ -51,7 +51,12 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/i18n", "@nuxtjs/firebase", "@nuxtjs/axios", "nuxt-clipboard2"],
+  modules: [
+    "@nuxtjs/i18n",
+    "@nuxtjs/firebase",
+    "@nuxtjs/axios",
+    "nuxt-clipboard2",
+  ],
   axios: {
     proxyHeaders: false,
     credentials: false,
