@@ -72,7 +72,7 @@ export default {
     cityAutocomplete: null,
     storeDomain: "",
     storeDomainBase: "",
-    storeDomainBaseRank: null
+    storeDomainBaseRank: null,
   }),
   validations: {
     storeName: {
@@ -136,8 +136,9 @@ export default {
         const doc = similarStores.docs[0];
         //todo: remove!
         console.log("Document data:", doc.data());
-        this.storeDomainBaseRank = doc["storeDomainBaseRank"]+1
-        this.storeDomain = this.storeDomain + "-" + String(this.storeDomainBaseRank)
+        this.storeDomainBaseRank = doc["storeDomainBaseRank"] + 1;
+        this.storeDomain =
+          this.storeDomain + "-" + String(this.storeDomainBaseRank);
       } else {
         this.storeDomainBaseRank = 1;
         this.storeDomain = this.storeDomainBase;
