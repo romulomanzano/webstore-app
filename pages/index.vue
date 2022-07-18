@@ -12,13 +12,18 @@
         :error-messages="invalidStoreName"
         @blur="$v.storeName.$touch()"
         @change="updateDomain()"
-      ></v-text-field>
+      >
+      </v-text-field>
       <v-text-field
-        :value="storeUrl"
+        :value="storeDomain"
         label="Pagina Web"
         readonly
         prepend-icon="mdi-clipboard"
         @click:prepend="doCopy()"
+        :error-messages="invalidStoreDomain"
+        @blur="$v.storeDomain.$touch()"
+        prefix="https://"
+        suffix=".web.tienda"
       ></v-text-field>
       <v-textarea
         v-model="description"
@@ -71,8 +76,7 @@ export default {
     storeName: "",
     cityAutocomplete: null,
     storeDomain: "",
-    storeDomainBase: "",
-    storeDomainBaseRank: null,
+    storeDomainExists: false,
   }),
   validations: {
     storeName: {
@@ -82,6 +86,9 @@ export default {
     storeName: {
       required,
       minLength: minLength(4),
+    },
+    storeDomain: {
+      required,
     },
     description: {
       required,
@@ -116,8 +123,8 @@ export default {
         });
       }
     },
-    updateDomain() {
-      this.storeDomainBase = this.storeName
+    async updateDomain() {
+      this.storeDomain = this.storeName
         .replace(/[^a-z0-9 -]/gi, "")
         .trim()
         .replace(/\s+/g, "-")
@@ -126,22 +133,15 @@ export default {
         .replace(/\p{Diacritic}/gu, "");
 
       //search if exists in DB
-      const similarStores = this.$fire.firestore
+      const similarStores = await this.$fire.firestore
         .collection("stores")
-        .where("storeDomainBase", "==", this.storeDomain)
-        .orderBy("storeDomain", "desc")
+        .where("storeDomain", "==", this.storeDomain)
         .limit(1)
         .get();
       if (similarStores.docs.length > 0) {
-        const doc = similarStores.docs[0];
-        //todo: remove!
-        console.log("Document data:", doc.data());
-        this.storeDomainBaseRank = doc["storeDomainBaseRank"] + 1;
-        this.storeDomain =
-          this.storeDomain + "-" + String(this.storeDomainBaseRank);
+        this.storeDomainExists = true;
       } else {
-        this.storeDomainBaseRank = 1;
-        this.storeDomain = this.storeDomainBase;
+        this.storeDomainExists = false;
       }
     },
     customFilter(item, queryText, itemText) {
@@ -172,6 +172,14 @@ export default {
     invalidStoreName() {
       if (this.$v.storeName.$error) {
         return "El nombre de la tienda debe tener al menos 4 letras";
+      }
+      return "";
+    },
+    invalidStoreDomain() {
+      if (this.$v.storeDomain.$error) {
+        return "Solo debe contener letras, numeros o un guion.";
+      } else if (this.storeDomainExists) {
+        return "El nombre de pagina ya existe";
       }
       return "";
     },
