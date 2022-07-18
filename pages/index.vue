@@ -106,7 +106,7 @@ export default {
           required,
         },
       },
-    }
+    },
   },
   methods: {
     changed() {
@@ -165,7 +165,8 @@ export default {
       currencies: "currencies/currencies",
     }),
     storeUrl() {
-      return this.storeDetails.storeDomain !== "" && !this.$v.storeDetails.storeName.$error
+      return this.storeDetails.storeDomain !== "" &&
+        !this.$v.storeDetails.storeName.$error
         ? "https://" + this.storeDetails.storeDomain + ".web.tienda"
         : "";
     },
