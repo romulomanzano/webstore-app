@@ -2,6 +2,7 @@ import { vuexfireMutations, firestoreAction } from "vuexfire";
 
 export const state = () => ({
   user: null,
+  store: null,
   products: [],
 });
 export const mutations = {
@@ -31,8 +32,17 @@ export const actions = {
       .collection("products");
     await bindFirestoreRef("products", ref, { wait: true });
   }),
-  unbindCountDocument: firestoreAction(function ({ unbindFirestoreRef }) {
-    unbindFirestoreRef("products", false);
+  bindStoreDocument: firestoreAction(async function ({
+    state,
+    bindFirestoreRef,
+  }) {
+    const ref = this.$fire.firestore
+      .collection("stores")
+      .where("users", "array-contains", state.user.uid).limit(1).get();
+    await bindFirestoreRef("store", ref, { wait: true });
+  }),
+  unbindStoreDocument: firestoreAction(function ({ unbindFirestoreRef }) {
+     unbindFirestoreRef("store", false);
   }),
   onAuthStateChangedAction: ({ commit }, { authUser }) => {
     if (!authUser) {

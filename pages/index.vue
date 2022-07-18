@@ -6,44 +6,43 @@
       /></v-row>
 
       <v-text-field
-        v-model="storeName"
+        v-model="storeDetails.storeName"
         label="Nombre de la Tienda"
         required
         :error-messages="invalidStoreName"
-        @blur="$v.storeName.$touch()"
+        @blur="$v.storeDetails.storeName.$touch()"
         @change="updateDomain()"
       >
       </v-text-field>
       <v-text-field
-        :value="storeDomain"
+        v-model="storeDetails.storeDomain"
         label="Pagina Web"
-        readonly
         prepend-icon="mdi-clipboard"
         @click:prepend="doCopy()"
         :error-messages="invalidStoreDomain"
-        @blur="$v.storeDomain.$touch()"
+        @blur="$v.storeDetails.storeDomain.$touch()"
         prefix="https://"
         suffix=".web.tienda"
       ></v-text-field>
       <v-textarea
-        v-model="description"
+        v-model="storeDetails.description"
         auto-grow
         filled
         label="Descripción"
         :error-messages="invalidDescription"
-        @blur="$v.description.$touch()"
+        @blur="$v.storeDetails.description.$touch()"
       >
       </v-textarea>
       <v-text-field
-        v-model="city"
+        v-model="storeDetails.city"
         label="Ciudad"
         :error-messages="invalidCity"
-        @blur="$v.city.$touch()"
+        @blur="$v.storeDetails.city.$touch()"
         @change="changed()"
         id="autocomplete"
       ></v-text-field>
       <v-autocomplete
-        v-model="currency"
+        v-model="storeDetails.currency"
         :items="currencies"
         :filter="customFilter"
         color="white"
@@ -55,8 +54,10 @@
         placeholder="Buscar"
         return-object
         :error-messages="invalidCurrencyCode"
-        @blur="$v.currency.$touch()"
+        @blur="$v.storeDetails.currency.$touch()"
       ></v-autocomplete>
+      <v-btn class="mr-4 mb-2 mt-2"> Borrar </v-btn>
+      <v-btn class="mb-2 mt-2"> Guardar </v-btn>
     </v-form>
   </v-main>
 </template>
@@ -69,43 +70,43 @@ import { mapGetters } from "vuex";
 export default {
   mixins: [validationMixin],
   data: () => ({
-    description: "",
-    currency: null,
     currencySearch: "",
-    city: "",
-    storeName: "",
     cityAutocomplete: null,
-    storeDomain: "",
+    storeDetails: {
+      description: "",
+      currency: null,
+      storeName: "",
+      storeDomain: "",
+      city: "",
+    },
     storeDomainExists: false,
   }),
   validations: {
-    storeName: {
-      required,
-      minLength: minLength(4),
-    },
-    storeName: {
-      required,
-      minLength: minLength(4),
-    },
-    storeDomain: {
-      required,
-    },
-    description: {
-      required,
-      minLength: minLength(10),
-      maxLength: maxLength(140),
-    },
-    city: {
-      required,
-    },
-    currency: {
-      moneda: {
+    storeDetails: {
+      storeName: {
+        required,
+        minLength: minLength(4),
+      },
+      storeDomain: {
         required,
       },
-      codigo_iso: {
+      description: {
+        required,
+        minLength: minLength(10),
+        maxLength: maxLength(140),
+      },
+      city: {
         required,
       },
-    },
+      currency: {
+        moneda: {
+          required,
+        },
+        codigo_iso: {
+          required,
+        },
+      },
+    }
   },
   methods: {
     changed() {
@@ -113,7 +114,6 @@ export default {
       this.city = place === undefined ? null : place.formatted_address;
     },
     async doCopy() {
-      console.log("here");
       if (this.storeUrl !== "") {
         await this.$copyText(this.storeUrl);
         this.$notify({
@@ -124,7 +124,7 @@ export default {
       }
     },
     async updateDomain() {
-      this.storeDomain = this.storeName
+      this.storeDetails.storeDomain = this.storeDetails.storeName
         .replace(/[^a-z0-9 -]/gi, "")
         .trim()
         .replace(/\s+/g, "-")
@@ -135,7 +135,7 @@ export default {
       //search if exists in DB
       const similarStores = await this.$fire.firestore
         .collection("stores")
-        .where("storeDomain", "==", this.storeDomain)
+        .where("storeDomain", "==", this.storeDetails.storeDomain)
         .limit(1)
         .get();
       if (similarStores.docs.length > 0) {
@@ -165,18 +165,18 @@ export default {
       currencies: "currencies/currencies",
     }),
     storeUrl() {
-      return this.storeDomain !== "" && !this.$v.storeName.$error
-        ? "https://" + this.storeDomain + ".web.tienda"
+      return this.storeDetails.storeDomain !== "" && !this.$v.storeDetails.storeName.$error
+        ? "https://" + this.storeDetails.storeDomain + ".web.tienda"
         : "";
     },
     invalidStoreName() {
-      if (this.$v.storeName.$error) {
+      if (this.$v.storeDetails.storeName.$error) {
         return "El nombre de la tienda debe tener al menos 4 letras";
       }
       return "";
     },
     invalidStoreDomain() {
-      if (this.$v.storeDomain.$error) {
+      if (this.$v.storeDetails.storeDomain.$error) {
         return "Solo debe contener letras, numeros o un guion.";
       } else if (this.storeDomainExists) {
         return "El nombre de pagina ya existe";
@@ -184,19 +184,19 @@ export default {
       return "";
     },
     invalidCurrencyCode() {
-      if (this.$v.currency.codigo_iso.$error) {
+      if (this.$v.storeDetails.currency.codigo_iso.$error) {
         return "Debe seleccionar una moneda";
       }
       return "";
     },
     invalidCity() {
-      if (this.$v.city.$error) {
+      if (this.$v.storeDetails.city.$error) {
         return "Debe seleccionar una ciudad";
       }
       return "";
     },
     invalidDescription() {
-      if (this.$v.description.$error) {
+      if (this.$v.storeDetails.description.$error) {
         return "La descripción debe tener entre 10 y 140 letras.";
       }
       return "";
