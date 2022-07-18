@@ -4,6 +4,7 @@ export const state = () => ({
   user: null,
   stores: [],
   products: [],
+  userData: null,
   activeStore: null,
 });
 export const mutations = {
@@ -33,18 +34,6 @@ export const actions = {
       .collection("products");
     await bindFirestoreRef("products", ref, { wait: true });
   }),
-  bindStoreDocuments: firestoreAction(async function ({
-    state,
-    bindFirestoreRef,
-  }) {
-    const ref = this.$fire.firestore
-      .collection("stores")
-      .where("users", "array-contains", state.user.uid);
-    await bindFirestoreRef("stores", ref, { wait: true });
-  }),
-  unbindStoreDocuments: firestoreAction(function ({ unbindFirestoreRef }) {
-    unbindFirestoreRef("store", false);
-  }),
   onAuthStateChangedAction: ({ commit }, { authUser }) => {
     if (!authUser) {
       // claims = null
@@ -59,26 +48,36 @@ export const actions = {
     // return the promise so we can await the write
     return this.$fire.firestore
       .collection("stores")
-      .doc(state.activeStore.uid)
+      .doc(state.activeStore.id)
       .collection("products")
       .add(data);
   }),
-  bindActiveStoreDocument: firestoreAction(async function (
-    { bindFirestoreRef },
-    data
-  ) {
+  bindUserDataDocument: firestoreAction(async function ({
+    bindFirestoreRef,
+    state,
+  }) {
     // return the promise so we can await the write
-    const ref = this.$fire.firestore.collection("stores").doc(data.storeId);
-    await bindFirestoreRef("activeStore", ref, { wait: true });
+    const ref = this.$fire.firestore.collection("userData").doc(state.user.uid);
+    await bindFirestoreRef("userData", ref, { wait: true });
+    if (ref && ref.stores) {
+      await bindFirestoreRef("activeStore", ref.stores[0], { wait: true });
+    }
   }),
-  addStore: firestoreAction(async function ({ bindFirestoreRef }, data) {
+  addStore: firestoreAction(async function ({ bindFirestoreRef, state }, data) {
     const ref = await this.$fire.firestore.collection("stores").add(data);
     await bindFirestoreRef("activeStore", ref, { wait: true });
+    return this.$fire.firestore
+      .collection("userData")
+      .doc(state.user.uid)
+      .set({ stores: [ref] }, { merge: true });
   }),
 };
 export const getters = {
   products(state) {
-    return state.products;
+    return state.userData.stores[0].products;
+  },
+  activeStore(state) {
+    return state.activeStore;
   },
   stores(state) {
     return state.stores;
@@ -86,8 +85,8 @@ export const getters = {
   user(state) {
     return state.user;
   },
-  activeStore(state) {
-    return state.activeStore;
+  userData(state) {
+    return state.userData;
   },
   isLoggedIn: (state) => {
     if (state.user === null) {

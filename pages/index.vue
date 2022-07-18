@@ -114,13 +114,12 @@ export default {
     ...mapActions({ addStore: "addStore" }),
     changed() {
       let place = this.cityAutocomplete.getPlace();
-      this.city = place === undefined ? null : place.formatted_address;
+      this.storeDetails.city =
+        place === undefined ? null : place.formatted_address;
     },
     saveStore() {
       if (this.activeStore === null) {
-        let store = Object.assign({}, this.storeDetails);
-        store.users = [this.user.uid];
-        this.addStore(store);
+        this.addStore(this.storeDetails);
       }
     },
     async doCopy() {
@@ -224,13 +223,18 @@ export default {
       return "";
     },
   },
-  mounted() {
+  async mounted() {
     const options = {
       types: ["(cities)"],
     };
     let input = document.getElementById("autocomplete");
     this.cityAutocomplete = new google.maps.places.Autocomplete(input, options);
     this.cityAutocomplete.addListener("place_changed", this.changed);
+    try {
+      await this.$store.dispatch("bindUserDataDocument");
+    } catch (e) {
+      console.error(e);
+    }
   },
 };
 </script>
