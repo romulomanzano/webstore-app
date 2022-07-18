@@ -66,7 +66,7 @@
 import Footer from "../components/Footer.vue";
 
 export default {
-  middleware: "authenticated",
+  middleware: "activestore",
   components: { Footer },
 
   data() {

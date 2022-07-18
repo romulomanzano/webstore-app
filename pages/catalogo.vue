@@ -35,7 +35,6 @@ export default {
   computed: {
     ...mapGetters({
       products: "products",
-      user: "user",
     }),
     headers() {
       return [

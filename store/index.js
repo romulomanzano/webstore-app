@@ -2,8 +2,9 @@ import { vuexfireMutations, firestoreAction } from "vuexfire";
 
 export const state = () => ({
   user: null,
-  store: null,
+  stores: [],
   products: [],
+  activeStore: null,
 });
 export const mutations = {
   ...vuexfireMutations,
@@ -27,23 +28,21 @@ export const actions = {
     bindFirestoreRef,
   }) {
     const ref = this.$fire.firestore
-      .collection("users")
-      .doc(state.user.uid)
+      .collection("stores")
+      .doc(state.activeStore.uid)
       .collection("products");
     await bindFirestoreRef("products", ref, { wait: true });
   }),
-  bindStoreDocument: firestoreAction(async function ({
+  bindStoreDocuments: firestoreAction(async function ({
     state,
     bindFirestoreRef,
   }) {
     const ref = this.$fire.firestore
       .collection("stores")
-      .where("users", "array-contains", state.user.uid)
-      .limit(1)
-      .get();
-    await bindFirestoreRef("store", ref, { wait: true });
+      .where("users", "array-contains", state.user.uid);
+    await bindFirestoreRef("stores", ref, { wait: true });
   }),
-  unbindStoreDocument: firestoreAction(function ({ unbindFirestoreRef }) {
+  unbindStoreDocuments: firestoreAction(function ({ unbindFirestoreRef }) {
     unbindFirestoreRef("store", false);
   }),
   onAuthStateChangedAction: ({ commit }, { authUser }) => {
@@ -59,18 +58,36 @@ export const actions = {
   addProduct: firestoreAction(async function ({ state }, data) {
     // return the promise so we can await the write
     return this.$fire.firestore
-      .collection("users")
-      .doc(state.user.uid)
+      .collection("stores")
+      .doc(state.activeStore.uid)
       .collection("products")
       .add(data);
+  }),
+  bindActiveStoreDocument: firestoreAction(async function (
+    { bindFirestoreRef },
+    data
+  ) {
+    // return the promise so we can await the write
+    const ref = this.$fire.firestore.collection("stores").doc(data.storeId);
+    await bindFirestoreRef("activeStore", ref, { wait: true });
+  }),
+  addStore: firestoreAction(async function ({bindFirestoreRef}, data) {
+    const ref = await this.$fire.firestore.collection("stores").add(data);
+    await bindFirestoreRef("activeStore", ref, { wait: true });
   }),
 };
 export const getters = {
   products(state) {
     return state.products;
   },
+  stores(state) {
+    return state.stores;
+  },
   user(state) {
     return state.user;
+  },
+  activeStore(state) {
+    return state.activeStore;
   },
   isLoggedIn: (state) => {
     if (state.user === null) {

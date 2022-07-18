@@ -24,7 +24,7 @@
 import Footer from "../components/Footer.vue";
 
 export default {
-  middleware: "login",
+  middleware: "unauthenticated",
   components: { Footer },
   data() {
     return {

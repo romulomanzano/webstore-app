@@ -57,7 +57,7 @@
         @blur="$v.storeDetails.currency.$touch()"
       ></v-autocomplete>
       <v-btn class="mr-4 mb-2 mt-2"> Borrar </v-btn>
-      <v-btn class="mb-2 mt-2"> Guardar </v-btn>
+      <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore"> Guardar </v-btn>
     </v-form>
   </v-main>
 </template>
@@ -65,7 +65,7 @@
 <script>
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -109,9 +109,17 @@ export default {
     },
   },
   methods: {
+    ...mapActions({ addStore: "addStore" }),
     changed() {
       let place = this.cityAutocomplete.getPlace();
       this.city = place === undefined ? null : place.formatted_address;
+    },
+    saveStore() {
+      if (this.activeStore === null) {
+        let store = Object.assign({}, this.storeDetails);
+        store.users = [this.user.uid];
+        this.addStore(store);
+      }
     },
     async doCopy() {
       if (this.storeUrl !== "") {
@@ -158,12 +166,23 @@ export default {
         textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
       );
     },
-    saveStore() {},
   },
   computed: {
     ...mapGetters({
       currencies: "currencies/currencies",
+      activeStore: "activeStore",
+      user: "user"
     }),
+    isValidForm() {
+      return (
+        !this.$v.storeDetails.storeName.$invalid &&
+        !this.$v.storeDetails.description.$invalid &&
+        !this.$v.storeDetails.currency.$invalid &&
+        !this.$v.storeDetails.city.$invalid &&
+        !this.$v.storeDetails.storeDomain.$invalid &&
+        !this.$v.storeDomainExists
+      );
+    },
     storeUrl() {
       return this.storeDetails.storeDomain !== "" &&
         !this.$v.storeDetails.storeName.$error
