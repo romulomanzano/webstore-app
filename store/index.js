@@ -71,7 +71,7 @@ export const actions = {
     const ref = this.$fire.firestore.collection("stores").doc(data.storeId);
     await bindFirestoreRef("activeStore", ref, { wait: true });
   }),
-  addStore: firestoreAction(async function ({bindFirestoreRef}, data) {
+  addStore: firestoreAction(async function ({ bindFirestoreRef }, data) {
     const ref = await this.$fire.firestore.collection("stores").add(data);
     await bindFirestoreRef("activeStore", ref, { wait: true });
   }),

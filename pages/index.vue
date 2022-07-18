@@ -57,7 +57,9 @@
         @blur="$v.storeDetails.currency.$touch()"
       ></v-autocomplete>
       <v-btn class="mr-4 mb-2 mt-2"> Borrar </v-btn>
-      <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore"> Guardar </v-btn>
+      <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore">
+        Guardar
+      </v-btn>
     </v-form>
   </v-main>
 </template>
@@ -171,7 +173,7 @@ export default {
     ...mapGetters({
       currencies: "currencies/currencies",
       activeStore: "activeStore",
-      user: "user"
+      user: "user",
     }),
     isValidForm() {
       return (
