@@ -3,7 +3,13 @@
     <v-row class="justify-center"
       ><notifications group="notifications" position="top"
     /></v-row>
-    <v-tabs background-color="primary" v-model="tab" center-active show-arrows dark>
+    <v-tabs
+      background-color="primary"
+      v-model="tab"
+      center-active
+      show-arrows
+      dark
+    >
       <v-tab>General</v-tab>
       <v-tab :disabled="activeStore === null">Enlaces</v-tab>
       <v-tab :disabled="activeStore === null">Contacto</v-tab>
