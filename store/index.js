@@ -2,7 +2,6 @@ import { vuexfireMutations, firestoreAction } from "vuexfire";
 
 export const state = () => ({
   user: null,
-  stores: [],
   products: [],
   userData: null,
   activeStore: null,
@@ -59,8 +58,14 @@ export const actions = {
     // return the promise so we can await the write
     const ref = this.$fire.firestore.collection("userData").doc(state.user.uid);
     await bindFirestoreRef("userData", ref, { wait: true });
-    if (ref && ref.stores) {
-      await bindFirestoreRef("activeStore", ref.stores[0], { wait: true });
+    if (state.userData && state.userData.stores) {
+      return bindFirestoreRef(
+        "activeStore",
+        this.$fire.firestore
+          .collection("stores")
+          .doc(state.userData.stores[0].id),
+        { wait: true }
+      );
     }
   }),
   addStore: firestoreAction(async function ({ bindFirestoreRef, state }, data) {
@@ -71,6 +76,12 @@ export const actions = {
       .doc(state.user.uid)
       .set({ stores: [ref] }, { merge: true });
   }),
+  updateStore: firestoreAction(async function ({ state }, data) {
+    return this.$fire.firestore
+      .collection("stores")
+      .doc(state.activeStore.id)
+      .set(data, { merge: true });
+  }),
 };
 export const getters = {
   products(state) {
@@ -80,7 +91,7 @@ export const getters = {
     return state.activeStore;
   },
   stores(state) {
-    return state.stores;
+    return state.userData.stores;
   },
   user(state) {
     return state.user;

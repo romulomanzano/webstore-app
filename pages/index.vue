@@ -1,66 +1,73 @@
 <template>
   <v-main>
-    <v-form ref="form" lazy-validation>
-      <v-row class="justify-center"
-        ><notifications group="notifications" position="top"
-      /></v-row>
-
-      <v-text-field
-        v-model="storeDetails.storeName"
-        label="Nombre de la Tienda"
-        required
-        :error-messages="invalidStoreName"
-        @blur="$v.storeDetails.storeName.$touch()"
-        @change="updateDomain()"
-      >
-      </v-text-field>
-      <v-text-field
-        v-model="storeDetails.storeDomain"
-        label="Pagina Web"
-        prepend-icon="mdi-clipboard"
-        @click:prepend="doCopy()"
-        :error-messages="invalidStoreDomain"
-        @blur="$v.storeDetails.storeDomain.$touch()"
-        prefix="https://"
-        suffix=".web.tienda"
-      ></v-text-field>
-      <v-textarea
-        v-model="storeDetails.description"
-        auto-grow
-        filled
-        label="Descripción"
-        :error-messages="invalidDescription"
-        @blur="$v.storeDetails.description.$touch()"
-      >
-      </v-textarea>
-      <v-text-field
-        v-model="storeDetails.city"
-        label="Ciudad"
-        :error-messages="invalidCity"
-        @blur="$v.storeDetails.city.$touch()"
-        @change="changed()"
-        id="autocomplete"
-      ></v-text-field>
-      <v-autocomplete
-        v-model="storeDetails.currency"
-        :items="currencies"
-        :filter="customFilter"
-        color="white"
-        hide-no-data
-        hide-selected
-        item-text="moneda"
-        item-value="codigo_iso"
-        label="Moneda"
-        placeholder="Buscar"
-        return-object
-        :error-messages="invalidCurrencyCode"
-        @blur="$v.storeDetails.currency.$touch()"
-      ></v-autocomplete>
-      <v-btn class="mr-4 mb-2 mt-2"> Borrar </v-btn>
-      <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore">
-        Guardar
-      </v-btn>
-    </v-form>
+    <v-row class="justify-center"
+      ><notifications group="notifications" position="top"
+    /></v-row>
+    <v-tabs background-color="primary" v-model="tab" center-active dark>
+      <v-tab>General</v-tab>
+      <v-tab>Links</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <v-form class="ma-4" ref="form" lazy-validation>
+          <v-text-field
+            v-model="storeDetails.storeName"
+            label="Nombre de la Tienda"
+            required
+            :error-messages="invalidStoreName"
+            @blur="$v.storeDetails.storeName.$touch()"
+            @change="updateDomain()"
+          >
+          </v-text-field>
+          <v-text-field
+            v-model="storeDetails.storeDomain"
+            label="Pagina Web"
+            prepend-icon="mdi-clipboard"
+            @click:prepend="doCopy()"
+            :error-messages="invalidStoreDomain"
+            @blur="$v.storeDetails.storeDomain.$touch()"
+            prefix="https://"
+            suffix=".web.tienda"
+          ></v-text-field>
+          <v-textarea
+            v-model="storeDetails.description"
+            auto-grow
+            filled
+            label="Descripción"
+            :error-messages="invalidDescription"
+            @blur="$v.storeDetails.description.$touch()"
+          >
+          </v-textarea>
+          <v-text-field
+            v-model="storeDetails.city"
+            label="Ciudad"
+            :error-messages="invalidCity"
+            @blur="$v.storeDetails.city.$touch()"
+            @change="changed()"
+            id="autocomplete"
+          ></v-text-field>
+          <v-autocomplete
+            v-model="storeDetails.currency"
+            :items="currencies"
+            :filter="customFilter"
+            color="white"
+            hide-no-data
+            hide-selected
+            item-text="moneda"
+            item-value="codigo_iso"
+            label="Moneda"
+            placeholder="Buscar"
+            return-object
+            :error-messages="invalidCurrencyCode"
+            @blur="$v.storeDetails.currency.$touch()"
+          ></v-autocomplete>
+          <v-btn class="mr-4 mb-2 mt-2" @click="cancelUpdate"> Cancelar </v-btn>
+          <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore">
+            Guardar
+          </v-btn>
+        </v-form>
+      </v-tab-item>
+    </v-tabs-items>
   </v-main>
 </template>
 
@@ -74,7 +81,15 @@ export default {
   data: () => ({
     currencySearch: "",
     cityAutocomplete: null,
+    tab: 0,
     storeDetails: {
+      description: "",
+      currency: null,
+      storeName: "",
+      storeDomain: "",
+      city: "",
+    },
+    baseStoreDetails: {
       description: "",
       currency: null,
       storeName: "",
@@ -110,17 +125,57 @@ export default {
       },
     },
   },
+  watch: {
+    activeStore() {
+      this.storeDetails = Object.assign({}, this.activeStore);
+    },
+    async storeUrl() {
+      //search if exists in DB
+      const similarStores = await this.$fire.firestore
+        .collection("stores")
+        .where("storeDomain", "==", this.storeDetails.storeDomain)
+        .limit(1)
+        .get();
+      if (
+        similarStores.docs.length > 0 &&
+        (!this.activeStore ||
+          this.activeStore.storeDomain !== this.storeDetails.storeDomain)
+      ) {
+        this.storeDomainExists = true;
+      } else {
+        this.storeDomainExists = false;
+      }
+    },
+  },
   methods: {
-    ...mapActions({ addStore: "addStore" }),
+    ...mapActions({ addStore: "addStore", updateStore: "updateStore" }),
     changed() {
       let place = this.cityAutocomplete.getPlace();
       this.storeDetails.city =
         place === undefined ? null : place.formatted_address;
     },
-    saveStore() {
+    cancelUpdate() {
       if (this.activeStore === null) {
-        this.addStore(this.storeDetails);
+        this.storeDetails = Object.assign({}, this.baseStoreDetails);
+      } else {
+        this.storeDetails = Object.assign({}, this.activeStore);
       }
+      this.$v.$reset();
+    },
+    saveStore() {
+      let promise = null;
+      if (this.activeStore === null) {
+        promise = this.addStore(this.storeDetails);
+      } else {
+        promise = this.updateStore(this.storeDetails);
+      }
+      promise.then(() => {
+        this.$notify({
+          type: "success",
+          text: "Operacion Existosa",
+          group: "notifications",
+        });
+      });
     },
     async doCopy() {
       if (this.storeUrl !== "") {
@@ -133,24 +188,14 @@ export default {
       }
     },
     async updateDomain() {
-      this.storeDetails.storeDomain = this.storeDetails.storeName
-        .replace(/[^a-z0-9 -]/gi, "")
-        .trim()
-        .replace(/\s+/g, "-")
-        .toLocaleLowerCase()
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "");
-
-      //search if exists in DB
-      const similarStores = await this.$fire.firestore
-        .collection("stores")
-        .where("storeDomain", "==", this.storeDetails.storeDomain)
-        .limit(1)
-        .get();
-      if (similarStores.docs.length > 0) {
-        this.storeDomainExists = true;
-      } else {
-        this.storeDomainExists = false;
+      if (this.activeStore === null) {
+        this.storeDetails.storeDomain = this.storeDetails.storeName
+          .replace(/[^a-z0-9 -]/gi, "")
+          .trim()
+          .replace(/\s+/g, "-")
+          .toLocaleLowerCase()
+          .normalize("NFD")
+          .replace(/\p{Diacritic}/gu, "");
       }
     },
     customFilter(item, queryText, itemText) {
@@ -223,18 +268,16 @@ export default {
       return "";
     },
   },
-  async mounted() {
+  mounted() {
     const options = {
       types: ["(cities)"],
     };
     let input = document.getElementById("autocomplete");
     this.cityAutocomplete = new google.maps.places.Autocomplete(input, options);
     this.cityAutocomplete.addListener("place_changed", this.changed);
-    try {
-      await this.$store.dispatch("bindUserDataDocument");
-    } catch (e) {
+    this.$store.dispatch("bindUserDataDocument").catch((err) => {
       console.error(e);
-    }
+    });
   },
 };
 </script>
