@@ -23,6 +23,9 @@
       <v-tab-item>
         <links-tab></links-tab>
       </v-tab-item>
+      <v-tab-item>
+        <contact-tab></contact-tab>
+      </v-tab-item>
     </v-tabs-items>
   </v-main>
 </template>
@@ -31,9 +34,10 @@
 import { mapGetters } from "vuex";
 import GeneralTab from "@/components/store/GeneralTab";
 import LinksTab from "@/components/store/LinksTab";
+import ContactTab from "@/components/store/ContactTab";
 
 export default {
-  components: { GeneralTab, LinksTab },
+  components: { GeneralTab, LinksTab, ContactTab },
   data: () => ({
     tab: 0,
   }),
