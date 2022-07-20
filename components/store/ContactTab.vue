@@ -2,6 +2,14 @@
   <div>
     <v-form class="ma-4" ref="form" lazy-validation>
       <v-text-field
+        label="Correo"
+        :value="user.email"
+        readonly
+        :disabled="true"
+        prepend-icon="mdi-at"
+      >
+      </v-text-field>
+      <v-text-field
         v-model="storeDetails.whatsapp"
         label="Whatsapp"
         :error-messages="invalidWhatsapp"
@@ -10,8 +18,23 @@
         hint="Utiliza el simbolo +, seguido por codigo de pais, y numero. Ejemplo: +18887775555"
         persistent-hint
         class="mb-2"
+        required
       >
       </v-text-field>
+      <v-radio-group
+        v-model="storeDetails.orderChannel"
+        @blur="$v.storeDetails.orderChannel.$touch()"
+        :error-messages="invalidOrderChannel"
+      >
+        <h4 class="ma-2 font-weight-medium">Opciones de Orden</h4>
+        <v-radio
+          v-for="n in orderOptions"
+          :key="n.value"
+          :label="n.label"
+          :value="n.value"
+        >
+        </v-radio>
+      </v-radio-group>
       <v-btn class="mr-4 mb-2 mt-2" @click="cancelUpdate"> Cancelar </v-btn>
       <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore">
         Guardar
@@ -21,7 +44,7 @@
 </template>
 
 <script>
-import { helpers } from "vuelidate/lib/validators";
+import { helpers, required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { mapGetters, mapActions } from "vuex";
 
@@ -36,15 +59,26 @@ export default {
   data: () => ({
     storeDetails: {
       whatsapp: "",
+      orderChannel: "",
     },
     basestoreDetails: {
       whatsapp: "",
+      orderChannel: "",
     },
+    orderOptions: [
+      { label: "Chat via WhatsApp", value: "liveChatWhatsapp" },
+      { label: "Notificacion via WhatsApp", value: "notificationWhatsapp" },
+      { label: "Notificacion via Email", value: "notificationEmail" },
+    ],
   }),
   validations: {
     storeDetails: {
       whatsapp: {
         phoneValidator,
+        required,
+      },
+      orderChannel: {
+        required,
       },
     },
   },
@@ -67,7 +101,7 @@ export default {
       this.$v.$reset();
     },
     saveStore() {
-      let data = { socialLinks: Object.assign({}, this.storeDetails) };
+      let data = { contactSettings: Object.assign({}, this.storeDetails) };
       this.updateStore(data).then(() => {
         this.$notify({
           type: "success",
@@ -80,13 +114,23 @@ export default {
   computed: {
     ...mapGetters({
       activeStore: "activeStore",
+      user: "user",
     }),
     isValidForm() {
-      return !this.$v.storeDetails.whatsapp.$invalid;
+      return (
+        !this.$v.storeDetails.whatsapp.$invalid &&
+        !this.$v.storeDetails.orderChannel.$invalid
+      );
     },
     invalidWhatsapp() {
       if (this.$v.storeDetails.whatsapp.$error) {
         return "Numero invalido";
+      }
+      return "";
+    },
+    invalidOrderChannel() {
+      if (this.$v.storeDetails.orderChannel.$error) {
+        return "Requerido";
       }
       return "";
     },
