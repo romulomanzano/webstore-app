@@ -27,6 +27,10 @@
         :error-messages="invalidOrderChannel"
       >
         <h4 class="ma-2 font-weight-medium">Opciones de Orden</h4>
+        <p class="mt-2 mb-4 font-weight-light">
+          Elegir si recibir ordenes via chat en vivo, o via notificaciones al
+          correo electronico o WhatsApp
+        </p>
         <v-radio
           v-for="n in orderOptions"
           :key="n.value"
