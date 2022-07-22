@@ -11,6 +11,8 @@
         v-model="storeDetails.shippingMethod"
         :disabled="!storeDetails.shippingAllowed"
       >
+        <h4 class="mb-2 font-weight-medium">Costo de Envio</h4>
+
         <v-radio
           v-for="n in shippingMethod"
           :key="n.value"
@@ -21,7 +23,7 @@
       </v-radio-group>
       <v-text-field
         v-if="storeDetails.shippingMethod === 'fixedCost'"
-        label="Costo de Envio"
+        label="Tasa de Envio"
         v-model="storeDetails.shippingFee"
         :prefix="activeStore.currency.simbolo"
         @blur="$v.storeDetails.shippingFee.$touch()"
@@ -60,7 +62,7 @@ export default {
     },
     shippingMethod: [
       { label: "Gratis", value: "free" },
-      { label: "Costo Fijo", value: "fixedCost" },
+      { label: "Tasa Fija", value: "fixedCost" },
       { label: "A coordinar con el cliente", value: "toBeDetermined" },
     ],
   }),
