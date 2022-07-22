@@ -29,6 +29,9 @@
       <v-tab-item>
         <shipping-tab></shipping-tab>
       </v-tab-item>
+      <v-tab-item>
+        <brand-tab></brand-tab>
+      </v-tab-item>
     </v-tabs-items>
   </v-main>
 </template>
@@ -39,9 +42,10 @@ import GeneralTab from "@/components/store/GeneralTab";
 import LinksTab from "@/components/store/LinksTab";
 import ContactTab from "@/components/store/ContactTab";
 import ShippingTab from "@/components/store/ShippingTab";
+import BrandTab from "@/components/store/BrandTab";
 
 export default {
-  components: { GeneralTab, LinksTab, ContactTab, ShippingTab },
+  components: { GeneralTab, LinksTab, ContactTab, ShippingTab, BrandTab },
   data: () => ({
     tab: 0,
   }),
