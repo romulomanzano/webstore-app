@@ -39,6 +39,7 @@ export default {
   plugins: [
     { src: "~/plugins/notifications-ssr", ssr: true },
     { src: "~/plugins/notifications-client", ssr: false },
+    { src: "~/plugins/vue2-filters" },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

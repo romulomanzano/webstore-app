@@ -13,7 +13,7 @@
       <v-tab>General</v-tab>
       <v-tab :disabled="activeStore === null">Enlaces</v-tab>
       <v-tab :disabled="activeStore === null">Contacto</v-tab>
-      <v-tab :disabled="activeStore === null">Envio</v-tab>
+      <v-tab :disabled="activeStore === null">Envios</v-tab>
       <v-tab :disabled="activeStore === null">Personalizacion</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
@@ -26,6 +26,9 @@
       <v-tab-item>
         <contact-tab></contact-tab>
       </v-tab-item>
+      <v-tab-item>
+        <shipping-tab></shipping-tab>
+      </v-tab-item>
     </v-tabs-items>
   </v-main>
 </template>
@@ -35,9 +38,10 @@ import { mapGetters } from "vuex";
 import GeneralTab from "@/components/store/GeneralTab";
 import LinksTab from "@/components/store/LinksTab";
 import ContactTab from "@/components/store/ContactTab";
+import ShippingTab from "@/components/store/ShippingTab";
 
 export default {
-  components: { GeneralTab, LinksTab, ContactTab },
+  components: { GeneralTab, LinksTab, ContactTab, ShippingTab },
   data: () => ({
     tab: 0,
   }),
