@@ -1,14 +1,11 @@
 <template>
   <div>
     <v-form class="ma-4" ref="form" lazy-validation>
-      <v-file-input
-        :rules="logoRules"
-        accept="image/png, image/jpeg, image/bmp"
-        placeholder="Pick an avatar"
-        prepend-icon="mdi-camera"
-        label="Logo"
-        v-model="storeDetails.logo"
-      ></v-file-input>
+      <v-img
+        :max-height="128"
+        :max-width="128"
+        :src="storeDetails.logoResized?.dataUrl"
+      ></v-img>
       <image-uploader
         @input="setImage"
         :debug="1"
@@ -25,11 +22,6 @@
         @onComplete="info"
       >
       </image-uploader>
-      <v-img
-        :max-height="128"
-        :max-width="128"
-        :src="storeDetails.logoResized?.dataUrl"
-      ></v-img>
       <v-btn class="mr-4 mb-2 mt-2" @click="cancelUpdate"> Cancelar </v-btn>
       <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveStore">
         Guardar
