@@ -35,8 +35,11 @@ export default {
       logoResized: null,
     },
     logoRules: [
-        value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
-      ],
+      (value) =>
+        !value ||
+        value.size < 2000000 ||
+        "Avatar size should be less than 2 MB!",
+    ],
   }),
   watch: {
     activeStore() {
