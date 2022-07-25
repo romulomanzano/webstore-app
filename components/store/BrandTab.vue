@@ -119,7 +119,7 @@ export default {
       user: "user",
     }),
     imgLabel() {
-      return this.storeDetails.logo === null ? 'Subir logo' : 'Reemplazar logo'
+      return this.storeDetails.logo === null ? "Subir logo" : "Reemplazar logo";
     },
     isValidForm() {
       return true;
