@@ -9,7 +9,7 @@
           :max-width="128"
           :src="storeDetails.logo?.dataUrl"
         ></v-img>
-        <image-uploader
+        <vuetify-image-uploader
           @input="setImage"
           :debug="1"
           :maxWidth="128"
@@ -17,14 +17,14 @@
           :quality="0.9"
           :autoRotate="true"
           outputFormat="verbose"
-          :preview="false"
+          :preview="true"
           :className="['fileinput', { 'fileinput--loaded': hasImage }]"
           :capture="true"
           accept="image/*"
           doNotResize="['gif', 'svg']"
           class="mt-4"
         >
-        </image-uploader>
+        </vuetify-image-uploader>
       </template>
       <h3 class="mt-4">Color Principal</h3>
       <v-color-picker
@@ -50,11 +50,11 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import ImageUploader from "vue-image-upload-resize";
+import VuetifyImageUploader from "@/components/VuetifyImageUploader";
 
 export default {
   name: "BrandTab",
-  components: { ImageUploader },
+  components: { VuetifyImageUploader },
   data: () => ({
     hasImage: false,
     storeDetails: {
