@@ -3,21 +3,27 @@
     <v-form class="ma-4" ref="form" lazy-validation>
       <h3>Logo</h3>
       <template>
-        <v-img
-          class="mt-4"
-          :max-height="128"
-          :max-width="128"
-          :src="storeDetails.logo?.dataUrl"
-        ></v-img>
+        <v-row align="end" v-show="storeDetails.logo !== null">
+          <v-img
+            class="mt-4"
+            :max-height="128"
+            :max-width="128"
+            :src="storeDetails.logo?.dataUrl"
+          />
+          <v-icon color="white" @click="storeDetails.logo = null">
+            mdi-delete
+          </v-icon>
+        </v-row>
         <vuetify-image-uploader
           @input="setImage"
+          :label="imgLabel"
           :debug="1"
           :maxWidth="128"
           :maxHeight="128"
           :quality="0.9"
           :autoRotate="true"
           outputFormat="verbose"
-          :preview="true"
+          :preview="false"
           :className="['fileinput', { 'fileinput--loaded': hasImage }]"
           :capture="true"
           accept="image/*"
@@ -112,6 +118,9 @@ export default {
       activeStore: "activeStore",
       user: "user",
     }),
+    imgLabel() {
+      return this.storeDetails.logo === null ? 'Subir logo' : 'Reemplazar logo'
+    },
     isValidForm() {
       return true;
     },
