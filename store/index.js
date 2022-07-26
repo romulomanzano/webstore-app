@@ -5,6 +5,7 @@ export const state = () => ({
   products: [],
   userData: null,
   activeStore: null,
+  activeProduct: null,
 });
 export const mutations = {
   ...vuexfireMutations,
@@ -29,7 +30,7 @@ export const actions = {
   }) {
     const ref = this.$fire.firestore
       .collection("stores")
-      .doc(state.activeStore.uid)
+      .doc(state.activeStore.id)
       .collection("products");
     await bindFirestoreRef("products", ref, { wait: true });
   }),
@@ -76,6 +77,22 @@ export const actions = {
       );
     }
   }),
+  bindActiveProductDocument: firestoreAction(async function (
+    { bindFirestoreRef, state },
+    payload
+  ) {
+    // return the promise so we can await the write
+    return bindFirestoreRef(
+      "activeProduct",
+      this.$fire.firestore
+        .collection("stores")
+        .doc(state.activeStore.id)
+        .collection("products")
+        .doc(payload.id),
+      { wait: true }
+    );
+  }),
+
   addStore: firestoreAction(async function ({ bindFirestoreRef, state }, data) {
     const ref = await this.$fire.firestore.collection("stores").add(data);
     await bindFirestoreRef("activeStore", ref, { wait: true });
@@ -93,10 +110,13 @@ export const actions = {
 };
 export const getters = {
   products(state) {
-    return state.userData.stores[0].products;
+    return state.products;
   },
   activeStore(state) {
     return state.activeStore;
+  },
+  activeProduct(state) {
+    return state.activeProduct;
   },
   stores(state) {
     return state.userData.stores;

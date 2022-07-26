@@ -9,7 +9,7 @@
               <v-btn
                 color="primary"
                 class="mb-2"
-                @click="$router.push({ path: '/catalogo/producto' });"
+                @click="$router.push({ path: '/catalogo/producto' })"
               >
                 Add Product
               </v-btn>
@@ -25,13 +25,8 @@
 import { mapGetters, mapActions } from "vuex";
 
 export default {
-  name: "home",
-  data: () => ({
-    defaultData: {
-      name: "avocado",
-      amount: 42,
-    },
-  }),
+  name: "catalogo",
+  data: () => ({}),
   computed: {
     ...mapGetters({
       products: "products",
@@ -42,12 +37,12 @@ export default {
           text: "Name",
           align: "start",
           sortable: true,
-          value: "name",
+          value: "productName",
         },
         {
-          text: "Amount",
+          text: "Description",
           align: "right",
-          value: "amount",
+          value: "description",
         },
       ];
     },

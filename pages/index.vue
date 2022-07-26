@@ -45,6 +45,7 @@ import ShippingTab from "@/components/store/ShippingTab";
 import BrandTab from "@/components/store/BrandTab";
 
 export default {
+  name: 'home',
   components: { GeneralTab, LinksTab, ContactTab, ShippingTab, BrandTab },
   data: () => ({
     tab: 0,
@@ -53,6 +54,11 @@ export default {
     ...mapGetters({
       activeStore: "activeStore",
     }),
+  },
+  mounted() {
+    this.$store.dispatch("bindUserDataDocument").catch((err) => {
+      console.error(e);
+    });
   },
 };
 </script>

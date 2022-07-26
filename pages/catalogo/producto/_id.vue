@@ -25,6 +25,7 @@ import { mapGetters } from "vuex";
 import ProductGeneralTab from "@/components/product/ProductGeneralTab";
 
 export default {
+  name: 'producto',
   components: { ProductGeneralTab },
   data: () => ({
     tab: 0,
