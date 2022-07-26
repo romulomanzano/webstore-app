@@ -9,7 +9,7 @@
               <v-btn
                 color="primary"
                 class="mb-2"
-                @click="$store.dispatch('addProduct', defaultData)"
+                @click="$router.push({ path: '/catalogo/producto' });"
               >
                 Add Product
               </v-btn>
@@ -51,11 +51,6 @@ export default {
         },
       ];
     },
-  },
-  methods: {
-    ...mapActions({
-      addProduct: "addProduct",
-    }),
   },
   async mounted() {
     try {
