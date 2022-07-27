@@ -99,8 +99,8 @@ export default {
     },
   },
   async beforeMount() {
-    await this.$store.dispatch("bindUserDataDocument")
-    await this.$store.dispatch("bindProductsCollection")
+    await this.$store.dispatch("bindUserDataDocument");
+    await this.$store.dispatch("bindProductsCollection");
   },
 };
 </script>

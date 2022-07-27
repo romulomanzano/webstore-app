@@ -217,8 +217,6 @@ export default {
      * @param  {object} event
      */
     uploadFile(e) {
-      console.log(e);
-      console.log(this.testFile);
       const file = e;
       if (file) {
         this.emitLoad();
