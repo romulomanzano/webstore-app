@@ -54,8 +54,8 @@ export default {
   },
   methods: {
     editProductPage(value) {
-      this.$router.push({ path: '/catalogo/producto/'+value.id })
-    }
+      this.$router.push({ path: "/catalogo/producto/" + value.id });
+    },
   },
   async mounted() {
     try {
