@@ -2,11 +2,11 @@
   <div>
     <v-form class="ma-4" ref="form" lazy-validation>
       <v-text-field
-        v-model="productDetails.productName"
+        v-model="productDetails.name"
         label="Nombre del Producto"
         required
-        :error-messages="invalidProductName"
-        @blur="$v.productDetails.productName.$touch()"
+        :error-messages="invalidName"
+        @blur="$v.productDetails.name.$touch()"
       >
       </v-text-field>
       <v-textarea
@@ -18,6 +18,14 @@
         @blur="$v.productDetails.description.$touch()"
       >
       </v-textarea>
+      <v-text-field
+        v-model="productDetails.price"
+        label="Precio"
+        :prefix="activeStore.currency.simbolo"
+        :error-messages="invalidPrice"
+        @blur="$v.productDetails.price.$touch()"
+      >
+      </v-text-field>
       <v-btn class="mr-4 mb-2 mt-2" @click="cancelUpdate"> Cancelar </v-btn>
       <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveProduct">
         Guardar
@@ -27,9 +35,16 @@
 </template>
 
 <script>
-import { required, minLength, maxLength } from "vuelidate/lib/validators";
+import {
+  required,
+  minLength,
+  maxLength,
+  numeric,
+} from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { mapGetters, mapActions } from "vuex";
+
+const mustBePositive = (value) => value >= 0;
 
 export default {
   name: "GeneralTab",
@@ -37,16 +52,18 @@ export default {
   data: () => ({
     productDetails: {
       description: "",
-      productName: "",
+      name: "",
+      price: null,
     },
     baseProductDetails: {
       description: "",
-      productName: "",
+      name: "",
+      price: null,
     },
   }),
   validations: {
     productDetails: {
-      productName: {
+      name: {
         required,
         minLength: minLength(4),
       },
@@ -54,6 +71,11 @@ export default {
         required,
         minLength: minLength(10),
         maxLength: maxLength(140),
+      },
+      price: {
+        required,
+        numeric,
+        mustBePositive,
       },
     },
   },
@@ -92,19 +114,27 @@ export default {
     ...mapGetters({
       activeProduct: "activeProduct",
       user: "user",
+      activeStore: "activeStore",
     }),
     isValidForm() {
       return (
-        !this.$v.productDetails.productName.$invalid &&
+        !this.$v.productDetails.name.$invalid &&
         !this.$v.productDetails.description.$invalid
       );
     },
-    invalidProductName() {
-      if (this.$v.productDetails.productName.$error) {
-        return "El nombre de la tienda debe tener al menos 4 letras";
+    invalidName() {
+      if (this.$v.productDetails.name.$error) {
+        return "El nombre del producto debe tener al menos 4 letras";
       }
       return "";
     },
+    invalidPrice() {
+      if (this.$v.productDetails.price.$error) {
+        return "El precio del producto debe ser un numero positivo";
+      }
+      return "";
+    },
+
     invalidDescription() {
       if (this.$v.productDetails.description.$error) {
         return "La descripción debe tener entre 10 y 140 letras.";

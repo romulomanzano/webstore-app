@@ -52,13 +52,13 @@ export const actions = {
       .collection("products")
       .add(data);
   }),
-  updateProduct: firestoreAction(async function ({ state }, payload) {
+  updateProduct: firestoreAction(async function ({ state }, data) {
     return this.$fire.firestore
       .collection("stores")
       .doc(state.activeStore.id)
       .collection("products")
-      .doc(payload.productId)
-      .set(payload.data, { merge: true });
+      .doc(state.activeProduct.id)
+      .set(data, { merge: true });
   }),
   bindUserDataDocument: firestoreAction(async function ({
     bindFirestoreRef,

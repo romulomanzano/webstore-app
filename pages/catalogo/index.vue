@@ -9,6 +9,12 @@
           class="elevation-1"
           @click:row="editProductPage"
         >
+          <template v-slot:item.price="{ item }">
+            <div>
+              {{ item.price | currency(activeStore.currency.simbolo, 0) }}
+            </div>
+          </template>
+
           <template v-slot:top>
             <template>
               <v-btn
@@ -27,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "catalogo",
@@ -35,6 +41,7 @@ export default {
   computed: {
     ...mapGetters({
       products: "products",
+      activeStore: "activeStore",
     }),
     headers() {
       return [
@@ -42,12 +49,17 @@ export default {
           text: "Name",
           align: "start",
           sortable: true,
-          value: "productName",
+          value: "name",
         },
         {
           text: "Description",
           align: "right",
           value: "description",
+        },
+        {
+          text: "Precio",
+          align: "right",
+          value: "price",
         },
       ];
     },
