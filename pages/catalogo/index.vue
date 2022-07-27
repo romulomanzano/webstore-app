@@ -3,7 +3,12 @@
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
         <notifications group="alerts" position="top" />
-        <v-data-table :headers="headers" :items="products" class="elevation-1">
+        <v-data-table
+          :headers="headers"
+          :items="products"
+          class="elevation-1"
+          @click:row="editProductPage"
+        >
           <template v-slot:top>
             <template>
               <v-btn
@@ -46,6 +51,11 @@ export default {
         },
       ];
     },
+  },
+  methods: {
+    editProductPage(value) {
+      this.$router.push({ path: '/catalogo/producto/'+value.id })
+    }
   },
   async mounted() {
     try {

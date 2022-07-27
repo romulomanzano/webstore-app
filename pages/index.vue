@@ -45,7 +45,7 @@ import ShippingTab from "@/components/store/ShippingTab";
 import BrandTab from "@/components/store/BrandTab";
 
 export default {
-  name: 'home',
+  name: "home",
   components: { GeneralTab, LinksTab, ContactTab, ShippingTab, BrandTab },
   data: () => ({
     tab: 0,

@@ -112,14 +112,5 @@ export default {
       return "";
     },
   },
-  mounted() {
-    if (this.$route.params.id) {
-      this.$store
-        .dispatch("bindActiveProductDocument", { id: this.$route.params.id })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  },
 };
 </script>

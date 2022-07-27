@@ -25,7 +25,7 @@ import { mapGetters } from "vuex";
 import ProductGeneralTab from "@/components/product/ProductGeneralTab";
 
 export default {
-  name: 'producto',
+  name: "producto",
   components: { ProductGeneralTab },
   data: () => ({
     tab: 0,
@@ -34,6 +34,19 @@ export default {
     ...mapGetters({
       activeStore: "activeStore",
     }),
+  },
+  mounted() {
+    if (this.$route.params.id) {
+      this.$store
+        .dispatch("bindActiveProductDocument", { id: this.$route.params.id })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      this.$store.dispatch("unbindActiveProductDocument").catch((err) => {
+        console.error(err);
+      });
+    }
   },
 };
 </script>

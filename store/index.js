@@ -92,7 +92,9 @@ export const actions = {
       { wait: true }
     );
   }),
-
+  unbindActiveProductDocument: firestoreAction(({ unbindFirestoreRef }) => {
+    unbindFirestoreRef("activeProduct");
+  }),
   addStore: firestoreAction(async function ({ bindFirestoreRef, state }, data) {
     const ref = await this.$fire.firestore.collection("stores").add(data);
     await bindFirestoreRef("activeStore", ref, { wait: true });
