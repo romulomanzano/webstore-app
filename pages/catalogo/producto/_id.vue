@@ -3,20 +3,22 @@
     <v-row class="justify-center"
       ><notifications group="notifications" position="top"
     /></v-row>
-    <v-tabs
-      background-color="primary"
-      v-model="tab"
-      center-active
-      show-arrows
-      dark
-    >
-      <v-tab>General</v-tab>
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item>
-        <product-general-tab></product-general-tab>
-      </v-tab-item>
-    </v-tabs-items>
+    <template v-if="ready">
+      <v-tabs
+        background-color="primary"
+        v-model="tab"
+        center-active
+        show-arrows
+        dark
+      >
+        <v-tab>General</v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <v-tab-item>
+          <product-general-tab></product-general-tab>
+        </v-tab-item>
+      </v-tabs-items>
+    </template>
   </v-main>
 </template>
 
@@ -29,23 +31,38 @@ export default {
   components: { ProductGeneralTab },
   data: () => ({
     tab: 0,
+    ready: false,
   }),
   computed: {
     ...mapGetters({
       activeStore: "activeStore",
     }),
   },
+  methods: {
+    async handleBinding() {
+      if (this.activeStore !== null) {
+        if (this.$route.params.id) {
+          this.$store
+            .dispatch("bindActiveProductDocument", {
+              id: this.$route.params.id,
+            })
+            .then((this.ready = true));
+        } else {
+          this.$store
+            .dispatch("unbindActiveProductDocument")
+            .then((this.ready = true));
+        }
+      }
+    },
+  },
+  watch: {
+    activeStore() {
+      this.handleBinding();
+    },
+  },
   mounted() {
-    if (this.$route.params.id) {
-      this.$store
-        .dispatch("bindActiveProductDocument", { id: this.$route.params.id })
-        .catch((err) => {
-          console.error(err);
-        });
-    } else {
-      this.$store.dispatch("unbindActiveProductDocument").catch((err) => {
-        console.error(err);
-      });
+    if (this.activeStore !== null ) {
+      this.handleBinding();
     }
   },
 };

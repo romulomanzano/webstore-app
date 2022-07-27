@@ -26,6 +26,19 @@
         @blur="$v.productDetails.price.$touch()"
       >
       </v-text-field>
+      <v-checkbox
+        v-model="productDetails.hide"
+        label="Ocultar Producto"
+        messages="Selecciona para ocultar el producto de tu pagina."
+      />
+      <v-text-field
+        class="mt-2"
+        v-model="productDetails.sku"
+        label="SKU"
+        hint="Identifica tus productos internamente"
+        persistent-hint
+      >
+      </v-text-field>
       <v-btn class="mr-4 mb-2 mt-2" @click="cancelUpdate"> Cancelar </v-btn>
       <v-btn class="mb-2 mt-2" :disabled="!isValidForm" @click="saveProduct">
         Guardar
@@ -54,11 +67,15 @@ export default {
       description: "",
       name: "",
       price: null,
+      hide: null,
+      sku: null,
     },
     baseProductDetails: {
       description: "",
       name: "",
       price: null,
+      hide: null,
+      sku: null,
     },
   }),
   validations: {
@@ -119,7 +136,8 @@ export default {
     isValidForm() {
       return (
         !this.$v.productDetails.name.$invalid &&
-        !this.$v.productDetails.description.$invalid
+        !this.$v.productDetails.description.$invalid &&
+        !this.$v.productDetails.price.$invalid
       );
     },
     invalidName() {

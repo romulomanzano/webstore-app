@@ -98,5 +98,9 @@ export default {
       this.$router.push("/login");
     },
   },
+  async beforeMount() {
+    await this.$store.dispatch("bindUserDataDocument")
+    await this.$store.dispatch("bindProductsCollection")
+  },
 };
 </script>

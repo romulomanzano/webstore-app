@@ -264,6 +264,7 @@ export default {
     let input = document.getElementById("autocomplete");
     this.cityAutocomplete = new google.maps.places.Autocomplete(input, options);
     this.cityAutocomplete.addListener("place_changed", this.changed);
+    this.storeDetails = Object.assign({}, this.activeStore);
   },
 };
 </script>

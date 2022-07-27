@@ -11,7 +11,12 @@
         >
           <template v-slot:item.price="{ item }">
             <div>
-              {{ item.price | currency(activeStore.currency.simbolo, 0) }}
+              {{ item.price | currency(activeStore?.currency.simbolo, 0) }}
+            </div>
+          </template>
+          <template v-slot:item.hide="{ item }">
+            <div>
+              {{ item.hide ? "No" : "Si" }}
             </div>
           </template>
 
@@ -61,6 +66,11 @@ export default {
           align: "right",
           value: "price",
         },
+        {
+          text: "Visible",
+          align: "right",
+          value: "hide",
+        },
       ];
     },
   },
@@ -68,13 +78,6 @@ export default {
     editProductPage(value) {
       this.$router.push({ path: "/catalogo/producto/" + value.id });
     },
-  },
-  async mounted() {
-    try {
-      await this.$store.dispatch("bindProductsCollection");
-    } catch (e) {
-      console.error(e);
-    }
   },
 };
 </script>

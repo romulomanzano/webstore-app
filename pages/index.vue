@@ -3,36 +3,38 @@
     <v-row class="justify-center"
       ><notifications group="notifications" position="top"
     /></v-row>
-    <v-tabs
-      background-color="primary"
-      v-model="tab"
-      center-active
-      show-arrows
-      dark
-    >
-      <v-tab>General</v-tab>
-      <v-tab :disabled="activeStore === null">Enlaces</v-tab>
-      <v-tab :disabled="activeStore === null">Contacto</v-tab>
-      <v-tab :disabled="activeStore === null">Envios</v-tab>
-      <v-tab :disabled="activeStore === null">Personalizacion</v-tab>
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item>
-        <general-tab></general-tab>
-      </v-tab-item>
-      <v-tab-item>
-        <links-tab></links-tab>
-      </v-tab-item>
-      <v-tab-item>
-        <contact-tab></contact-tab>
-      </v-tab-item>
-      <v-tab-item>
-        <shipping-tab></shipping-tab>
-      </v-tab-item>
-      <v-tab-item>
-        <brand-tab></brand-tab>
-      </v-tab-item>
-    </v-tabs-items>
+    <template v-if="ready">
+      <v-tabs
+        background-color="primary"
+        v-model="tab"
+        center-active
+        show-arrows
+        dark
+      >
+        <v-tab>General</v-tab>
+        <v-tab :disabled="activeStore === null">Enlaces</v-tab>
+        <v-tab :disabled="activeStore === null">Contacto</v-tab>
+        <v-tab :disabled="activeStore === null">Envios</v-tab>
+        <v-tab :disabled="activeStore === null">Personalizacion</v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="tab">
+        <v-tab-item>
+          <general-tab></general-tab>
+        </v-tab-item>
+        <v-tab-item>
+          <links-tab></links-tab>
+        </v-tab-item>
+        <v-tab-item>
+          <contact-tab></contact-tab>
+        </v-tab-item>
+        <v-tab-item>
+          <shipping-tab></shipping-tab>
+        </v-tab-item>
+        <v-tab-item>
+          <brand-tab></brand-tab>
+        </v-tab-item>
+      </v-tabs-items>
+    </template>
   </v-main>
 </template>
 
@@ -49,16 +51,22 @@ export default {
   components: { GeneralTab, LinksTab, ContactTab, ShippingTab, BrandTab },
   data: () => ({
     tab: 0,
+    ready: false,
   }),
   computed: {
     ...mapGetters({
       activeStore: "activeStore",
     }),
   },
+  watch: {
+    activeStore(value) {
+      this.ready = value !== null ? true : false;
+    },
+  },
   mounted() {
-    this.$store.dispatch("bindUserDataDocument").catch((err) => {
-      console.error(e);
-    });
+    if (this.activeStore !== null) {
+      this.ready = true;
+    }
   },
 };
 </script>
