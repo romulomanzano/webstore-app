@@ -8,7 +8,7 @@
           Por ejemplo, talla, color, tamaño, etc."
         persistent-hint
       >
-        <h4 class="ma-2 font-weight-medium">Variantes del Producto</h4>
+        <h4 class="ma-2 font-weight-medium">Preferencia</h4>
         <v-radio
           v-for="n in hasVariationsOptions"
           :key="n.value"
@@ -17,6 +17,7 @@
         >
         </v-radio>
       </v-radio-group>
+      <h4 class="ma-2 mt-4 font-weight-medium">Variantes del Producto</h4>
       <v-list>
         <v-list-group
           v-for="item in items"
@@ -34,18 +35,46 @@
             </v-list-item-action>
           </template>
 
-          <v-list-item v-for="child in item.items" :key="child.title">
+          <v-list-item v-for="child in item.items" :key="child.key">
             <v-list-item-content>
-              <v-list-item-title v-text="child.title"></v-list-item-title>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="child.title"
+                    filled
+                    type="text"
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="child.stock"
+                    filled
+                    label="# disponibles"
+                    type="number"
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="child.additionalCost"
+                    filled
+                    label="Costo adicional"
+                    :append-outer-icon="'mdi-delete'"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
             </v-list-item-content>
-            <v-list-item-action>
-              <v-icon small color="grey lighten-1"> mdi-pencil </v-icon>
-            </v-list-item-action>
           </v-list-item>
           <v-list-item>
-            <v-list-item-action>
-              <v-icon class="ml-2" color="grey lighten-1"> mdi-plus </v-icon>
-            </v-list-item-action>
+            <v-btn
+              class="mx-2"
+              fab
+              dark
+              small
+              color="primary"
+              @click="addOption(item)"
+            >
+              <v-icon dark> mdi-plus </v-icon>
+            </v-btn>
           </v-list-item>
         </v-list-group>
       </v-list>
@@ -83,43 +112,18 @@ export default {
     items: [
       {
         action: "mdi-ticket",
-        items: [{ title: "List Item" }],
+        items: [{ title: "List Item", key: "f", additionalCost : 3, stock: 2 }],
         title: "Attractions",
       },
       {
         action: "mdi-silverware-fork-knife",
         active: true,
         items: [
-          { title: "Breakfast & brunch" },
-          { title: "New American" },
-          { title: "Sushi" },
+          { title: "Breakfast & brunch", key: "f2", additionalCost : 3, stock: 2 },
+          { title: "New American", key: "f1", additionalCost : 3, stock: 2 },
+          { title: "Sushi", key: "f", additionalCost : 3, stock: 2 },
         ],
         title: "Dining",
-      },
-      {
-        action: "mdi-school",
-        items: [{ title: "List Item" }],
-        title: "Education",
-      },
-      {
-        action: "mdi-human-male-female-child",
-        items: [{ title: "List Item" }],
-        title: "Family",
-      },
-      {
-        action: "mdi-bottle-tonic-plus",
-        items: [{ title: "List Item" }],
-        title: "Health",
-      },
-      {
-        action: "mdi-briefcase",
-        items: [{ title: "List Item" }],
-        title: "Office",
-      },
-      {
-        action: "mdi-tag",
-        items: [{ title: "List Item" }],
-        title: "Promotions",
       },
     ],
   }),
@@ -148,6 +152,9 @@ export default {
       } else {
         this.productDetails = Object.assign({}, this.activeProduct.inventory);
       }
+    },
+    addOption(item) {
+      item.items.push({ key: "awesome", title: "" });
     },
     cancelUpdate() {
       this.resetInventory();
