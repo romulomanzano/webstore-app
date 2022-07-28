@@ -67,9 +67,7 @@
                   </v-col>
                 </v-row>
                 <v-card-actions>
-                  <v-btn color="primary">
-                    Eliminar
-                  </v-btn>
+                  <v-btn color="primary"> Eliminar </v-btn>
                 </v-card-actions>
               </v-card>
             </v-list-item-content>
