@@ -37,31 +37,35 @@
 
           <v-list-item v-for="child in item.items" :key="child.key">
             <v-list-item-content>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="child.title"
-                    filled
-                    type="text"
-                  ></v-text-field>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="child.stock"
-                    filled
-                    label="# disponibles"
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="child.additionalCost"
-                    filled
-                    label="Costo adicional"
-                    :append-outer-icon="'mdi-delete'"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+              <v-card outlined elevation="2">
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="child.title"
+                      filled
+                      type="text"
+                    ></v-text-field>
+                  </v-col>
+                  </v-row>
+                  <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="child.stock"
+                      filled
+                      label="# disponibles"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="child.additionalCost"
+                      filled
+                      label="Costo adicional"
+                      :append-outer-icon="'mdi-delete'"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-card>
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
