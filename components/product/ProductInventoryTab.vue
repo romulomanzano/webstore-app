@@ -23,17 +23,14 @@
           v-for="item in items"
           :key="item.title"
           v-model="item.active"
-          :prepend-icon="item.action"
           no-action
         >
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title v-text="item.title"></v-list-item-title>
             </v-list-item-content>
-            <v-list-item-action>
-              <v-icon class="ml-2" color="grey lighten-1"> mdi-pencil </v-icon>
-            </v-list-item-action>
           </template>
+          <v-list-item> </v-list-item>
 
           <v-list-item v-for="child in item.items" :key="child.key">
             <v-list-item-content>
@@ -43,7 +40,7 @@
                     <v-text-field
                       v-model="child.title"
                       filled
-                      label="Nombre/Opcion"
+                      label="Opcion"
                       type="text"
                     ></v-text-field>
                   </v-col>
@@ -62,12 +59,17 @@
                       v-model="child.additionalCost"
                       filled
                       label="Costo adicional"
-                      :append-outer-icon="'mdi-delete'"
                     ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-card-actions>
-                  <v-btn color="primary"> Eliminar </v-btn>
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="removeOption(item, child)"
+                  >
+                    Eliminar
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-list-item-content>
@@ -119,12 +121,10 @@ export default {
     ],
     items: [
       {
-        action: "mdi-ticket",
         items: [{ title: "List Item", key: "f", additionalCost: 3, stock: 2 }],
         title: "Attractions",
       },
       {
-        action: "mdi-silverware-fork-knife",
         active: true,
         items: [
           {
@@ -168,6 +168,11 @@ export default {
     },
     addOption(item) {
       item.items.push({ key: "awesome", title: "" });
+    },
+    removeOption(item, option) {
+      item.items = item.items.filter(function (ele) {
+        return ele != option;
+      });
     },
     cancelUpdate() {
       this.resetInventory();
