@@ -50,7 +50,7 @@ export default {
       activeStore: "activeStore",
     }),
     disableAdding() {
-      return this.products.lenght >=10;
+      return this.products.lenght >= 10;
     },
     headers() {
       return [
