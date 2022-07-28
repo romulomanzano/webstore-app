@@ -112,16 +112,21 @@ export default {
     items: [
       {
         action: "mdi-ticket",
-        items: [{ title: "List Item", key: "f", additionalCost : 3, stock: 2 }],
+        items: [{ title: "List Item", key: "f", additionalCost: 3, stock: 2 }],
         title: "Attractions",
       },
       {
         action: "mdi-silverware-fork-knife",
         active: true,
         items: [
-          { title: "Breakfast & brunch", key: "f2", additionalCost : 3, stock: 2 },
-          { title: "New American", key: "f1", additionalCost : 3, stock: 2 },
-          { title: "Sushi", key: "f", additionalCost : 3, stock: 2 },
+          {
+            title: "Breakfast & brunch",
+            key: "f2",
+            additionalCost: 3,
+            stock: 2,
+          },
+          { title: "New American", key: "f1", additionalCost: 3, stock: 2 },
+          { title: "Sushi", key: "f", additionalCost: 3, stock: 2 },
         ],
         title: "Dining",
       },
