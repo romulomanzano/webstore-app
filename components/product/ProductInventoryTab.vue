@@ -42,7 +42,7 @@
               <v-icon small color="grey lighten-1"> mdi-pencil </v-icon>
             </v-list-item-action>
           </v-list-item>
-          <v-list-item >
+          <v-list-item>
             <v-list-item-action>
               <v-icon class="ml-2" color="grey lighten-1"> mdi-plus </v-icon>
             </v-list-item-action>
