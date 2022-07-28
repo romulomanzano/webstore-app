@@ -37,12 +37,13 @@
 
           <v-list-item v-for="child in item.items" :key="child.key">
             <v-list-item-content>
-              <v-card outlined elevation="2">
+              <v-card outlined rounded elevation="2" class="pa-2">
                 <v-row>
                   <v-col>
                     <v-text-field
                       v-model="child.title"
                       filled
+                      label="Nombre/Opcion"
                       type="text"
                     ></v-text-field>
                   </v-col>
@@ -65,6 +66,11 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
+                <v-card-actions>
+                  <v-btn color="primary">
+                    Eliminar
+                  </v-btn>
+                </v-card-actions>
               </v-card>
             </v-list-item-content>
           </v-list-item>
