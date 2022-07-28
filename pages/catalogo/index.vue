@@ -26,6 +26,7 @@
                 color="primary"
                 class="mb-2"
                 @click="$router.push({ path: '/catalogo/producto' })"
+                :disabled="disableAdding"
               >
                 Add Product
               </v-btn>
@@ -48,6 +49,9 @@ export default {
       products: "products",
       activeStore: "activeStore",
     }),
+    disableAdding() {
+      return this.products.lenght >=10;
+    },
     headers() {
       return [
         {

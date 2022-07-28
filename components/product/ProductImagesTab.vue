@@ -8,15 +8,15 @@
           :max-width="128"
           :src="item.dataUrl"
         />
-        <v-icon color="white"> mdi-delete </v-icon>
+        <v-icon color="white" @click="removeEntry(item)"> mdi-delete </v-icon>
       </v-row>
       <template>
         <vuetify-image-uploader
           @input="setImage"
           label="Subir Foto"
           :debug="1"
-          :maxWidth="128"
-          :maxHeight="128"
+          :maxWidth="1024"
+          :maxHeight="1024"
           :quality="0.9"
           :autoRotate="true"
           outputFormat="verbose"
@@ -26,11 +26,14 @@
           accept="image/*"
           doNotResize="['gif', 'svg']"
           class="mt-4"
+          :disabled="limitReached"
         >
         </vuetify-image-uploader>
       </template>
       <v-btn class="mr-4 mb-2 mt-2" @click="cancelUpdate"> Cancelar </v-btn>
-      <v-btn class="mb-2 mt-2" @click="saveProduct"> Guardar </v-btn>
+      <v-btn class="mb-2 mt-2" @click="saveProduct" :disabled="limitReached">
+        Guardar
+      </v-btn>
     </v-form>
   </div>
 </template>
@@ -65,7 +68,6 @@ export default {
     },
     cancelUpdate() {
       this.resetProductDetails();
-      this.$v.$reset();
     },
     saveProduct() {
       this.updateProduct({ images: this.images }).then(() => {
@@ -82,6 +84,11 @@ export default {
       img.info.modifiedDate = null; //needed to avoid upload errors
       this.images.push(img);
     },
+    removeEntry(value) {
+      this.images = this.images.filter(function (ele) {
+        return ele != value;
+      });
+    },
   },
   computed: {
     ...mapGetters({
@@ -89,6 +96,9 @@ export default {
       user: "user",
       activeStore: "activeStore",
     }),
+    limitReached() {
+      return this.images.length >= 4;
+    },
   },
   mounted() {
     this.resetProductDetails();

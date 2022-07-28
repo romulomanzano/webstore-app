@@ -60,7 +60,7 @@ import { mapGetters, mapActions } from "vuex";
 const mustBePositive = (value) => value >= 0;
 
 export default {
-  name: "GeneralTab",
+  name: "ProductGeneralTab",
   mixins: [validationMixin],
   data: () => ({
     productDetails: {

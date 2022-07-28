@@ -15,6 +15,8 @@
       :class="className"
       @change="uploadFile"
       :accept="accept"
+      :disabled="disabled"
+      :messages="disabled ? 'Ha excedido el numero de fotos permitido' : null"
     />
   </div>
 </template>
@@ -70,6 +72,11 @@ export default {
       type: String,
       default: "fileInput",
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    
     label: {
       type: String,
       default: "fileInput",
