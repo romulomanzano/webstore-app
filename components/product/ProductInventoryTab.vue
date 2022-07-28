@@ -46,8 +46,8 @@
                       type="text"
                     ></v-text-field>
                   </v-col>
-                  </v-row>
-                  <v-row>
+                </v-row>
+                <v-row>
                   <v-col>
                     <v-text-field
                       v-model="child.stock"
