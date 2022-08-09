@@ -60,6 +60,16 @@ export const actions = {
       .doc(state.activeProduct.id)
       .set(data, { merge: true });
   }),
+  bindActiveStoreDocument: firestoreAction(async function ({
+    state,
+    bindFirestoreRef,
+  }) {
+    const storeRef = this.$fire.firestore
+      .collection("stores")
+      .doc(state.userData.stores[0].id);
+    return bindFirestoreRef("activeStore", storeRef, { wait: true });
+  }),
+
   bindUserDataDocument: firestoreAction(async function ({
     bindFirestoreRef,
     state,
@@ -68,13 +78,7 @@ export const actions = {
     const ref = this.$fire.firestore.collection("userData").doc(state.user.uid);
     await bindFirestoreRef("userData", ref, { wait: true });
     if (state.userData && state.userData.stores) {
-      return bindFirestoreRef(
-        "activeStore",
-        this.$fire.firestore
-          .collection("stores")
-          .doc(state.userData.stores[0].id),
-        { wait: true }
-      );
+      dispatch('bindActiveStoreDocument')
     }
   }),
   bindActiveProductDocument: firestoreAction(async function (
