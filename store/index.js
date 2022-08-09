@@ -78,7 +78,7 @@ export const actions = {
     const ref = this.$fire.firestore.collection("userData").doc(state.user.uid);
     await bindFirestoreRef("userData", ref, { wait: true });
     if (state.userData && state.userData.stores) {
-      dispatch('bindActiveStoreDocument')
+      dispatch("bindActiveStoreDocument");
     }
   }),
   bindActiveProductDocument: firestoreAction(async function (
