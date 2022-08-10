@@ -116,21 +116,25 @@ export default {
   },
   watch: {
     activeStore() {
-      this.storeDetails = Object.assign({}, this.activeStore);
+      this.resetSettings();
     },
     async storeUrl() {
       //search if exists in DB
-      const similarStores = await this.$fire.firestore
-        .collection("stores")
-        .where("storeDomain", "==", this.storeDetails.storeDomain)
-        .limit(1)
-        .get();
-      if (
-        similarStores.docs.length > 0 &&
-        (!this.activeStore ||
-          this.activeStore.storeDomain !== this.storeDetails.storeDomain)
-      ) {
-        this.storeDomainExists = true;
+      if (this.storeUrl !== "") {
+        const similarStores = await this.$fire.firestore
+          .collection("stores")
+          .where("storeDomain", "==", this.storeDetails.storeDomain)
+          .limit(1)
+          .get();
+        if (
+          similarStores.docs.length > 0 &&
+          (!this.activeStore ||
+            this.activeStore.storeDomain !== this.storeDetails.storeDomain)
+        ) {
+          this.storeDomainExists = true;
+        } else {
+          this.storeDomainExists = false;
+        }
       } else {
         this.storeDomainExists = false;
       }
@@ -138,17 +142,20 @@ export default {
   },
   methods: {
     ...mapActions({ addStore: "addStore", updateStore: "updateStore" }),
+    resetSettings() {
+      if (this.activeStore === undefined || this.activeStore === null) {
+        this.storeDetails = Object.assign({}, this.baseStoreDetails);
+      } else {
+        this.storeDetails = Object.assign({}, this.activeStore);
+      }
+    },
     changed() {
       let place = this.cityAutocomplete.getPlace();
       this.storeDetails.city =
         place === undefined ? null : place.formatted_address;
     },
     cancelUpdate() {
-      if (this.activeStore === null) {
-        this.storeDetails = Object.assign({}, this.baseStoreDetails);
-      } else {
-        this.storeDetails = Object.assign({}, this.activeStore);
-      }
+      this.resetSettings();
       this.$v.$reset();
     },
     saveStore() {
@@ -264,7 +271,7 @@ export default {
     let input = document.getElementById("autocomplete");
     this.cityAutocomplete = new google.maps.places.Autocomplete(input, options);
     this.cityAutocomplete.addListener("place_changed", this.changed);
-    this.storeDetails = Object.assign({}, this.activeStore);
+    this.resetSettings();
   },
 };
 </script>

@@ -82,6 +82,19 @@ export default {
     editProductPage(value) {
       this.$router.push({ path: "/catalogo/producto/" + value.id });
     },
+    async handleBinding() {
+      if (this.activeStore !== null) {
+        this.$store.dispatch("bindProductsCollection");
+      }
+    },
+  },
+  watch: {
+    activeStore() {
+      this.handleBinding();
+    },
+  },
+  mounted() {
+    this.handleBinding();
   },
 };
 </script>

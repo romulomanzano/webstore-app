@@ -73,6 +73,7 @@ export const actions = {
   bindUserDataDocument: firestoreAction(async function ({
     bindFirestoreRef,
     state,
+    dispatch
   }) {
     // return the promise so we can await the write
     const ref = this.$fire.firestore.collection("userData").doc(state.user.uid);

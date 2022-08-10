@@ -51,7 +51,7 @@ export default {
   components: { GeneralTab, LinksTab, ContactTab, ShippingTab, BrandTab },
   data: () => ({
     tab: 0,
-    ready: false,
+    ready: true,
   }),
   computed: {
     ...mapGetters({
