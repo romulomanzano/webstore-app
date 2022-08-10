@@ -188,10 +188,9 @@ export default {
     },
     productDetails() {
       if (this.productDetails.hasVariations !== true) {
-        this.productDetails.variations = []
+        this.productDetails.variations = [];
       }
-    }
-
+    },
   },
   methods: {
     ...mapActions({ updateProduct: "updateProduct" }),
