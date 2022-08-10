@@ -21,9 +21,11 @@
         <h4 class="ma-2 mt-4 font-weight-medium">Stock del Producto</h4>
         <v-text-field
           v-model="productDetails.uniqueStock"
-          label="Stock"
+          label="Unidades Disponibles"
           :error-messages="invalidStock"
           @blur="$v.productDetails.uniqueStock.$touch()"
+          hint="Elige el numero de unidades disponibles actualmente. Se actualizara a medida que recibas pedidos."
+          persistent-hint
         >
         </v-text-field>
       </template>
@@ -159,7 +161,7 @@ export default {
         align: "start",
         value: "name",
       },
-      { text: "Stock", value: "stock" },
+      { text: "# Disponibles", value: "stock" },
       { text: "Costo Adicional", value: "addOnCost" },
       { text: "Acciones", value: "actions" },
     ],
@@ -286,7 +288,7 @@ export default {
     },
     invalidStock() {
       if (this.$v.productDetails.uniqueStock.$error) {
-        return "El stock debe ser un numero positivo";
+        return "El numero de unidades debe ser un numero positivo";
       }
       return "";
     },
@@ -296,7 +298,7 @@ export default {
         this.$v.productDetails.variations.$error &&
         this.productDetails.variations.length > 0
       ) {
-        return "La variante debe tener al menos 2 letras, y numeros positivos en stock y costos.";
+        return "La variante debe tener al menos 2 letras, y numeros positivos en unidades y costos.";
       }
       return "";
     },
