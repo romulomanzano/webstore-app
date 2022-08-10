@@ -43,9 +43,6 @@
           <template v-slot:item.name="props">
             <v-edit-dialog
               :return-value.sync="props.item.name"
-              @save="save"
-              @cancel="cancel"
-              @close="close"
               large
               save-text="OK"
               cancel-text="Cancelar"
@@ -57,6 +54,7 @@
                   label="Editar"
                   single-line
                   counter
+                  @blur="$v.productDetails.variations.$touch()"
                 ></v-text-field>
               </template>
             </v-edit-dialog>
@@ -64,9 +62,6 @@
           <template v-slot:item.stock="props">
             <v-edit-dialog
               :return-value.sync="props.item.stock"
-              @save="save"
-              @cancel="cancel"
-              @close="close"
               large
               save-text="OK"
               cancel-text="Cancelar"
@@ -78,6 +73,7 @@
                   label="Editar"
                   single-line
                   counter
+                  @blur="$v.productDetails.variations.$touch()"
                   autofocus
                 ></v-text-field>
               </template>
@@ -86,9 +82,6 @@
           <template v-slot:item.addOnCost="props">
             <v-edit-dialog
               :return-value.sync="props.item.addOnCost"
-              @save="save"
-              @cancel="cancel"
-              @close="close"
               large
               save-text="OK"
               cancel-text="Cancelar"
@@ -100,6 +93,7 @@
                   label="Editar"
                   single-line
                   counter
+                  @blur="$v.productDetails.variations.$touch()"
                   autofocus
                 ></v-text-field>
               </template>
@@ -109,15 +103,9 @@
             <v-icon small @click="removeOption(item)"> mdi-delete </v-icon>
           </template>
         </v-data-table>
-
-        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-          {{ snackText }}
-
-          <template v-slot:action="{ attrs }">
-            <v-btn v-bind="attrs" text @click="snack = false"> Close </v-btn>
-          </template>
-        </v-snackbar>
       </template>
+      
+      <v-alert v-if="this.$v.productDetails.variations.$error" type="error">{{ invalidVariations}}</v-alert>
       <div class="mt-4 mb-2">
         <v-btn class="mr-4" @click="cancelUpdate"> Cancelar </v-btn>
         <v-btn :disabled="!isValidForm" @click="saveProduct"> Guardar </v-btn>
@@ -127,7 +115,7 @@
 </template>
 
 <script>
-import { required, requiredIf } from "vuelidate/lib/validators";
+import { required, requiredIf, minLength, numeric } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { mapGetters, mapActions } from "vuex";
 
@@ -137,10 +125,6 @@ export default {
   name: "ProductInventoryTab",
   mixins: [validationMixin],
   data: () => ({
-    snack: false,
-    snackColor: "",
-    snackText: "",
-    max25chars: (v) => v.length <= 25 || "Input too long!",
     pagination: {},
     baseOption: {
       name: "-",
@@ -179,6 +163,26 @@ export default {
         required: requiredIf(function () {
           return this.productDetails.hasVariations === true;
         }),
+        $each: {
+          name: {
+            required,
+            minLength: minLength(2),
+          },
+          name: {
+            required,
+            minLength: minLength(2),
+          },
+          stock: {
+            required,
+            numeric,
+            mustBePositive,
+          },
+          addOnCost: {
+            required,
+            numeric,
+            mustBePositive,
+          },
+        },
       },
     },
   },
@@ -196,6 +200,7 @@ export default {
     ...mapActions({ updateProduct: "updateProduct" }),
     addOption() {
       this.productDetails.variations.push(Object.assign({}, this.baseOption));
+      this.$v.productDetails.variations.$touch();
     },
     resetInventory() {
       if (this.activeProduct?.inventory === undefined) {
@@ -224,24 +229,6 @@ export default {
         });
       });
     },
-    save() {
-      this.snack = true;
-      this.snackColor = "success";
-      this.snackText = "Data saved";
-    },
-    cancel() {
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText = "Canceled";
-    },
-    open() {
-      this.snack = true;
-      this.snackColor = "info";
-      this.snackText = "Dialog opened";
-    },
-    close() {
-      console.log("Dialog closed");
-    },
   },
   computed: {
     ...mapGetters({
@@ -250,7 +237,13 @@ export default {
       activeStore: "activeStore",
     }),
     isValidForm() {
-      return !this.$v.productDetails.hasVariations.$invalid;
+      return !this.$v.productDetails.hasVariations.$invalid && !this.$v.productDetails.variations.$invalid;
+    },
+    invalidVariations() {
+      if (this.$v.productDetails.variations.$error) {
+        return "La variante debe tener al menos 2 letras, y numeros positivos en stock y costos.";
+      }
+      return "";
     },
   },
   mounted() {

@@ -152,7 +152,6 @@ export default {
       }
       return "";
     },
-
     invalidDescription() {
       if (this.$v.productDetails.description.$error) {
         return "La descripción debe tener entre 10 y 140 letras.";
