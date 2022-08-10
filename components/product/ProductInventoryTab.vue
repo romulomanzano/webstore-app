@@ -17,6 +17,16 @@
         >
         </v-radio>
       </v-radio-group>
+      <template v-if="!productDetails.hasVariations">
+        <h4 class="ma-2 mt-4 font-weight-medium">Stock del Producto</h4>
+        <v-text-field
+          v-model="productDetails.uniqueStock"
+          label="Stock"
+          :error-messages="invalidStock"
+          @blur="$v.productDetails.uniqueStock.$touch()"
+        >
+        </v-text-field>
+      </template>
       <template v-if="productDetails.hasVariations">
         <h4 class="ma-2 mt-4 font-weight-medium">Variantes del Producto</h4>
         <v-data-table
@@ -105,9 +115,14 @@
         </v-data-table>
       </template>
 
-      <v-alert v-if="this.$v.productDetails.variations.$error" type="error">{{
-        invalidVariations
-      }}</v-alert>
+      <v-alert
+        v-if="
+          this.$v.productDetails.variations.$error &&
+          this.productDetails.variations.length > 0
+        "
+        type="error"
+        >{{ invalidVariations }}</v-alert
+      >
       <div class="mt-4 mb-2">
         <v-btn class="mr-4" @click="cancelUpdate"> Cancelar </v-btn>
         <v-btn :disabled="!isValidForm" @click="saveProduct"> Guardar </v-btn>
@@ -151,10 +166,12 @@ export default {
     productDetails: {
       hasVariations: null,
       variations: [],
+      uniqueStock: null,
     },
     baseProductDetails: {
       hasVariations: null,
       variations: [],
+      uniqueStock: null,
     },
     hasVariationsOptions: [
       { value: false, label: "No, presentación única" },
@@ -165,6 +182,12 @@ export default {
     productDetails: {
       hasVariations: {
         required,
+      },
+      uniqueStock: {
+        required: requiredIf(function () {
+          return this.productDetails.hasVariations === false;
+        }),
+        mustBePositive,
       },
       variations: {
         required: requiredIf(function () {
@@ -197,9 +220,12 @@ export default {
     activeProduct() {
       this.resetInventory();
     },
-    productDetails() {
+    hasVariationsBoolean() {
       if (this.productDetails.hasVariations !== true) {
         this.productDetails.variations = [];
+      } else {
+        this.productDetails.uniqueStock = null;
+        this.$v.$reset();
       }
     },
   },
@@ -222,6 +248,7 @@ export default {
           return ele != option;
         }
       );
+      this.$v.productDetails.variations.$touch();
     },
     cancelUpdate() {
       this.resetInventory();
@@ -243,14 +270,28 @@ export default {
       user: "user",
       activeStore: "activeStore",
     }),
+    hasVariationsBoolean() {
+      return this.productDetails.hasVariations;
+    },
     isValidForm() {
       return (
         !this.$v.productDetails.hasVariations.$invalid &&
-        !this.$v.productDetails.variations.$invalid
+        !this.$v.productDetails.variations.$invalid &&
+        !this.$v.productDetails.uniqueStock.$invalid
       );
     },
+    invalidStock() {
+      if (this.$v.productDetails.uniqueStock.$error) {
+        return "El stock debe ser un numero positivo";
+      }
+      return "";
+    },
+
     invalidVariations() {
-      if (this.$v.productDetails.variations.$error) {
+      if (
+        this.$v.productDetails.variations.$error &&
+        this.productDetails.variations.length > 0
+      ) {
         return "La variante debe tener al menos 2 letras, y numeros positivos en stock y costos.";
       }
       return "";
