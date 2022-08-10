@@ -240,6 +240,7 @@ export default {
         this.productDetails = Object.assign({}, this.baseProductDetails);
       } else {
         this.productDetails = Object.assign({}, this.activeProduct.inventory);
+        this.productDetails.variations = Object.assign([], this.activeProduct.inventory.variations);
       }
     },
     removeOption(option) {
