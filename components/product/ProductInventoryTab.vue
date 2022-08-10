@@ -104,8 +104,10 @@
           </template>
         </v-data-table>
       </template>
-      
-      <v-alert v-if="this.$v.productDetails.variations.$error" type="error">{{ invalidVariations}}</v-alert>
+
+      <v-alert v-if="this.$v.productDetails.variations.$error" type="error">{{
+        invalidVariations
+      }}</v-alert>
       <div class="mt-4 mb-2">
         <v-btn class="mr-4" @click="cancelUpdate"> Cancelar </v-btn>
         <v-btn :disabled="!isValidForm" @click="saveProduct"> Guardar </v-btn>
@@ -115,7 +117,12 @@
 </template>
 
 <script>
-import { required, requiredIf, minLength, numeric } from "vuelidate/lib/validators";
+import {
+  required,
+  requiredIf,
+  minLength,
+  numeric,
+} from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { mapGetters, mapActions } from "vuex";
 
@@ -237,7 +244,10 @@ export default {
       activeStore: "activeStore",
     }),
     isValidForm() {
-      return !this.$v.productDetails.hasVariations.$invalid && !this.$v.productDetails.variations.$invalid;
+      return (
+        !this.$v.productDetails.hasVariations.$invalid &&
+        !this.$v.productDetails.variations.$invalid
+      );
     },
     invalidVariations() {
       if (this.$v.productDetails.variations.$error) {
