@@ -33,16 +33,34 @@
           <div>
             <v-data-table
               :headers="headers"
-              :items="desserts"
+              :items="category.items"
               :disable-sort="true"
             >
+              <template v-slot:top>
+                <v-col class="mb-4">
+                  <template>
+                    <v-btn
+                      color="primary"
+                      x-small
+                      :right="true"
+                      absolute
+                      fab
+                      @click="addOption(category)"
+                    >
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </template>
+                </v-col>
+              </template>
               <template v-slot:item.name="props">
                 <v-edit-dialog
                   :return-value.sync="props.item.name"
                   @save="save"
                   @cancel="cancel"
-                  @open="open"
                   @close="close"
+                  large
+                  save-text="OK"
+                  cancel-text="Cancelar"
                 >
                   {{ props.item.name }}
                   <template v-slot:input>
@@ -60,8 +78,10 @@
                   :return-value.sync="props.item.stock"
                   @save="save"
                   @cancel="cancel"
-                  @open="open"
                   @close="close"
+                  large
+                  save-text="OK"
+                  cancel-text="Cancelar"
                 >
                   <div>{{ props.item.stock }}</div>
                   <template v-slot:input>
@@ -80,8 +100,10 @@
                   :return-value.sync="props.item.addOnCost"
                   @save="save"
                   @cancel="cancel"
-                  @open="open"
                   @close="close"
+                  large
+                  save-text="OK"
+                  cancel-text="Cancelar"
                 >
                   <div>{{ props.item.addOnCost }}</div>
                   <template v-slot:input>
@@ -133,6 +155,11 @@ export default {
     snackText: "",
     max25chars: (v) => v.length <= 25 || "Input too long!",
     pagination: {},
+    baseOption: {
+      name: "",
+      stock: 0,
+      addOnCost: 0,
+    },
     headers: [
       {
         text: "Opcion",
@@ -141,18 +168,6 @@ export default {
       },
       { text: "Stock", value: "stock" },
       { text: "Costo Adicional", value: "addOnCost" },
-    ],
-    desserts: [
-      {
-        name: "Frozen Yogurt",
-        stock: 159,
-        addOnCost: 4.0,
-      },
-      {
-        name: "Ice cream sandwich",
-        stock: 237,
-        addOnCost: 4.3,
-      },
     ],
     productDetails: {
       hasVariations: null,
@@ -168,22 +183,23 @@ export default {
     ],
     categories: [
       {
-        items: [{ title: "List Item", key: "f", additionalCost: 3, stock: 2 }],
         title: "Attractions",
+        items: [],
       },
       {
-        active: true,
+        title: "Dining",
         items: [
           {
-            title: "Breakfast & brunch",
-            key: "f2",
-            additionalCost: 3,
-            stock: 2,
+            name: "Frozen Yogurt",
+            stock: 159,
+            addOnCost: 4.0,
           },
-          { title: "New American", key: "f1", additionalCost: 3, stock: 2 },
-          { title: "Sushi", key: "f", additionalCost: 3, stock: 2 },
+          {
+            name: "Ice cream sandwich",
+            stock: 237,
+            addOnCost: 4.3,
+          },
         ],
-        title: "Dining",
       },
     ],
   }),
@@ -206,15 +222,15 @@ export default {
   },
   methods: {
     ...mapActions({ updateProduct: "updateProduct" }),
+    addOption(category) {
+      category.items.push(Object.assign({}, this.baseOption));
+    },
     resetInventory() {
       if (this.activeProduct === null) {
         this.productDetails = Object.assign({}, this.baseProductDetails);
       } else {
         this.productDetails = Object.assign({}, this.activeProduct.inventory);
       }
-    },
-    addOption(item) {
-      item.items.push({ key: "awesome", title: "" });
     },
     removeOption(item, option) {
       item.items = item.items.filter(function (ele) {
