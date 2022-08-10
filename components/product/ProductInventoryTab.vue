@@ -17,120 +17,107 @@
         >
         </v-radio>
       </v-radio-group>
-      <h4 class="ma-2 mt-4 font-weight-medium">Variantes del Producto</h4>
-      <v-list>
-        <v-list-group
-          v-for="category in categories"
-          :key="category.title"
-          v-model="category.active"
-          no-action
+      <template v-if="productDetails.hasVariations">
+        <h4 class="ma-2 mt-4 font-weight-medium">Variantes del Producto</h4>
+        <v-data-table
+          :headers="headers"
+          :items="productDetails.variations"
+          :disable-sort="true"
         >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title v-text="category.title"></v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <div>
-            <v-data-table
-              :headers="headers"
-              :items="category.items"
-              :disable-sort="true"
-            >
-              <template v-slot:top>
-                <v-col class="mb-4">
-                  <template>
-                    <v-btn
-                      color="primary"
-                      x-small
-                      :right="true"
-                      absolute
-                      fab
-                      @click="addOption(category)"
-                    >
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                  </template>
-                </v-col>
-              </template>
-              <template v-slot:item.name="props">
-                <v-edit-dialog
-                  :return-value.sync="props.item.name"
-                  @save="save"
-                  @cancel="cancel"
-                  @close="close"
-                  large
-                  save-text="OK"
-                  cancel-text="Cancelar"
+          <template v-slot:top>
+            <v-col class="mb-4">
+              <template>
+                <v-btn
+                  color="primary"
+                  x-small
+                  :right="true"
+                  absolute
+                  fab
+                  @click="addOption()"
                 >
-                  {{ props.item.name }}
-                  <template v-slot:input>
-                    <v-text-field
-                      v-model="props.item.name"
-                      label="Editar"
-                      single-line
-                      counter
-                    ></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <template v-slot:item.stock="props">
-                <v-edit-dialog
-                  :return-value.sync="props.item.stock"
-                  @save="save"
-                  @cancel="cancel"
-                  @close="close"
-                  large
-                  save-text="OK"
-                  cancel-text="Cancelar"
-                >
-                  <div>{{ props.item.stock }}</div>
-                  <template v-slot:input>
-                    <v-text-field
-                      v-model="props.item.stock"
-                      label="Editar"
-                      single-line
-                      counter
-                      autofocus
-                    ></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <template v-slot:item.addOnCost="props">
-                <v-edit-dialog
-                  :return-value.sync="props.item.addOnCost"
-                  @save="save"
-                  @cancel="cancel"
-                  @close="close"
-                  large
-                  save-text="OK"
-                  cancel-text="Cancelar"
-                >
-                  <div>{{ props.item.addOnCost }}</div>
-                  <template v-slot:input>
-                    <v-text-field
-                      v-model="props.item.addOnCost"
-                      label="Editar"
-                      single-line
-                      counter
-                      autofocus
-                    ></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-            </v-data-table>
-
-            <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-              {{ snackText }}
-
-              <template v-slot:action="{ attrs }">
-                <v-btn v-bind="attrs" text @click="snack = false">
-                  Close
+                  <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
-            </v-snackbar>
-          </div>
-        </v-list-group>
-      </v-list>
+            </v-col>
+          </template>
+          <template v-slot:item.name="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.name"
+              @save="save"
+              @cancel="cancel"
+              @close="close"
+              large
+              save-text="OK"
+              cancel-text="Cancelar"
+            >
+              {{ props.item.name }}
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.name"
+                  label="Editar"
+                  single-line
+                  counter
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+          <template v-slot:item.stock="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.stock"
+              @save="save"
+              @cancel="cancel"
+              @close="close"
+              large
+              save-text="OK"
+              cancel-text="Cancelar"
+            >
+              <div>{{ props.item.stock }}</div>
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.stock"
+                  label="Editar"
+                  single-line
+                  counter
+                  autofocus
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+          <template v-slot:item.addOnCost="props">
+            <v-edit-dialog
+              :return-value.sync="props.item.addOnCost"
+              @save="save"
+              @cancel="cancel"
+              @close="close"
+              large
+              save-text="OK"
+              cancel-text="Cancelar"
+            >
+              <div>{{ props.item.addOnCost }}</div>
+              <template v-slot:input>
+                <v-text-field
+                  v-model="props.item.addOnCost"
+                  label="Editar"
+                  single-line
+                  counter
+                  autofocus
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-icon small @click="removeOption(item)"> mdi-delete </v-icon>
+          </template>
+        </v-data-table>
+
+        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+          {{ snackText }}
+
+          <template v-slot:action="{ attrs }">
+            <v-btn v-bind="attrs" text @click="snack = false"> Close </v-btn>
+          </template>
+        </v-snackbar>
+      </template>
       <div class="mt-4 mb-2">
         <v-btn class="mr-4" @click="cancelUpdate"> Cancelar </v-btn>
         <v-btn :disabled="!isValidForm" @click="saveProduct"> Guardar </v-btn>
@@ -156,7 +143,7 @@ export default {
     max25chars: (v) => v.length <= 25 || "Input too long!",
     pagination: {},
     baseOption: {
-      name: "",
+      name: "-",
       stock: 0,
       addOnCost: 0,
     },
@@ -168,39 +155,19 @@ export default {
       },
       { text: "Stock", value: "stock" },
       { text: "Costo Adicional", value: "addOnCost" },
+      { text: "Acciones", value: "actions" },
     ],
     productDetails: {
       hasVariations: null,
-      variations: null,
+      variations: [],
     },
     baseProductDetails: {
       hasVariations: null,
-      variations: null,
+      variations: [],
     },
     hasVariationsOptions: [
       { value: false, label: "No, presentación única" },
       { value: true, label: "Sí, tiene variantes" },
-    ],
-    categories: [
-      {
-        title: "Attractions",
-        items: [],
-      },
-      {
-        title: "Dining",
-        items: [
-          {
-            name: "Frozen Yogurt",
-            stock: 159,
-            addOnCost: 4.0,
-          },
-          {
-            name: "Ice cream sandwich",
-            stock: 237,
-            addOnCost: 4.3,
-          },
-        ],
-      },
     ],
   }),
   validations: {
@@ -219,23 +186,31 @@ export default {
     activeProduct() {
       this.resetInventory();
     },
+    productDetails() {
+      if (this.productDetails.hasVariations !== true) {
+        this.productDetails.variations = []
+      }
+    }
+
   },
   methods: {
     ...mapActions({ updateProduct: "updateProduct" }),
-    addOption(category) {
-      category.items.push(Object.assign({}, this.baseOption));
+    addOption() {
+      this.productDetails.variations.push(Object.assign({}, this.baseOption));
     },
     resetInventory() {
-      if (this.activeProduct === null) {
+      if (this.activeProduct?.inventory === undefined) {
         this.productDetails = Object.assign({}, this.baseProductDetails);
       } else {
         this.productDetails = Object.assign({}, this.activeProduct.inventory);
       }
     },
-    removeOption(item, option) {
-      item.items = item.items.filter(function (ele) {
-        return ele != option;
-      });
+    removeOption(option) {
+      this.productDetails.variations = this.productDetails.variations.filter(
+        function (ele) {
+          return ele != option;
+        }
+      );
     },
     cancelUpdate() {
       this.resetInventory();
