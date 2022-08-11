@@ -85,6 +85,11 @@ export default {
           title: "Catalogo",
           to: "/catalogo",
         },
+        {
+          icon: "mdi-share-variant",
+          title: "Compartir",
+          to: "/sharing",
+        },
       ],
       miniVariant: false,
       right: true,
