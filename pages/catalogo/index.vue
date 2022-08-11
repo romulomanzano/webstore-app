@@ -28,7 +28,16 @@
           :items="products"
           class="elevation-1"
           @click:row="editProductPage"
+          :disable-sort="true"
+          :footer-props="{
+            'items-per-page-text': 'Productos por pagina',
+          }"
         >
+          <template v-slot:item.description="{ item }">
+            <div>
+              {{ item.description.substring(0, 20) + "..." }}
+            </div>
+          </template>
           <template v-slot:item.price="{ item }">
             <div>
               {{ item.price | currency(activeStore?.currency.simbolo, 0) }}
@@ -36,10 +45,22 @@
           </template>
           <template v-slot:item.hide="{ item }">
             <div>
-              {{ item.hide ? "No" : "Si" }}
+              {{ item.hide !== true ? "Si" : "No" }}
+            </div>
+          </template>
+          <template v-slot:item.stock="{ item }">
+            <div>
+              {{
+                item.inventory?.hasVariations
+                  ? getAggregateStock(item.inventory?.variations)
+                  : item.inventory?.uniqueStock
+              }}
             </div>
           </template>
           <template v-slot:item.actions="{ item }">
+            <v-icon small @click.stop="editProductPage(item)">
+              mdi-pencil
+            </v-icon>
             <v-icon small @click.stop="setDelete(item)"> mdi-delete </v-icon>
           </template>
 
@@ -97,13 +118,16 @@ export default {
           value: "price",
         },
         {
-          text: "Visible",
+          text: "Stock",
           align: "right",
+          value: "stock",
+        },
+        {
+          text: "Visible",
           value: "hide",
         },
         {
           text: "Acciones",
-          align: "right",
           value: "actions",
         },
       ];
@@ -125,6 +149,13 @@ export default {
     cancelDelete(item) {
       this.dialog = false;
       this.pendingProduct = null;
+    },
+    getAggregateStock(a) {
+      var total = 0;
+      for (var i in a) {
+        total += parseInt(a[i].stock);
+      }
+      return total;
     },
     deleteProduct() {
       this.$fire.firestore

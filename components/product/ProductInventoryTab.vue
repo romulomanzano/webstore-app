@@ -35,6 +35,9 @@
           :headers="headers"
           :items="productDetails.variations"
           :disable-sort="true"
+          :footer-props="{
+            'items-per-page-text': 'Variantes por pagina',
+          }"
         >
           <template v-slot:top>
             <v-col class="mb-4">

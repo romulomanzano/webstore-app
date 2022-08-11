@@ -12,8 +12,8 @@
         dark
       >
         <v-tab>General</v-tab>
-        <v-tab>Fotos</v-tab>
-        <v-tab>Inventario</v-tab>
+        <v-tab :disabled="activeProduct === null">Fotos</v-tab>
+        <v-tab :disabled="activeProduct === null">Inventario</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
@@ -46,10 +46,11 @@ export default {
   computed: {
     ...mapGetters({
       activeStore: "activeStore",
+      activeProduct: "activeProduct",
     }),
   },
   methods: {
-    async handleBinding() {
+    async handleBindingForStore() {
       if (this.activeStore !== null) {
         if (this.$route.params.id) {
           this.$store
@@ -67,12 +68,12 @@ export default {
   },
   watch: {
     activeStore() {
-      this.handleBinding();
+      this.handleBindingForStore();
     },
   },
   mounted() {
     if (this.activeStore !== null) {
-      this.handleBinding();
+      this.handleBindingForStore();
     }
   },
 };

@@ -44,13 +44,14 @@ export const actions = {
       commit("ON_AUTH_STATE_CHANGED_MUTATION", authUser);
     }
   },
-  addProduct: firestoreAction(async function ({ state }, data) {
+  addProduct: firestoreAction(async function ({ state, dispatch }, data) {
     // return the promise so we can await the write
-    return this.$fire.firestore
+    const ref = await this.$fire.firestore
       .collection("stores")
       .doc(state.activeStore.id)
       .collection("products")
       .add(data);
+    dispatch("bindActiveProductDocument", ref);
   }),
   updateProduct: firestoreAction(async function ({ state }, data) {
     return this.$fire.firestore
