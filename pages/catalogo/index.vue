@@ -3,6 +3,26 @@
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
         <notifications group="alerts" position="top" />
+        <template>
+          <v-dialog v-model="dialog" persistent max-width="290">
+            <v-card>
+              <v-card-title class="text-h5"> Eliminar producto? </v-card-title>
+              <v-card-text
+                >Una vez eliminado, no podras recibir mas pedidos por el
+                producto.</v-card-text
+              >
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green darken-1" text @click="cancelDelete()">
+                  Cancelar
+                </v-btn>
+                <v-btn color="green darken-1" text @click="deleteProduct()">
+                  Confirmar
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
         <v-data-table
           :headers="headers"
           :items="products"
@@ -20,8 +40,9 @@
             </div>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small @click="deleteProduct(item)"> mdi-delete </v-icon>
+            <v-icon small @click.stop="setDelete(item)"> mdi-delete </v-icon>
           </template>
+
           <template v-slot:top>
             <template>
               <v-btn
@@ -45,7 +66,10 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "catalogo",
-  data: () => ({}),
+  data: () => ({
+    dialog: false,
+    pendingProduct: null,
+  }),
   computed: {
     ...mapGetters({
       products: "products",
@@ -94,13 +118,23 @@ export default {
         this.$store.dispatch("bindProductsCollection");
       }
     },
-    deleteProduct(product) {
+    setDelete(item) {
+      this.dialog = true;
+      this.pendingProduct = item;
+    },
+    cancelDelete(item) {
+      this.dialog = false;
+      this.pendingProduct = null;
+    },
+    deleteProduct() {
       this.$fire.firestore
         .collection("stores")
         .doc(this.activeStore.id)
         .collection("products")
-        .doc(product.id)
+        .doc(this.pendingProduct.id)
         .delete();
+      this.dialog = false;
+      this.pendingProduct = null;
     },
   },
   watch: {
