@@ -19,16 +19,18 @@
               {{ item.hide ? "No" : "Si" }}
             </div>
           </template>
-
+          <template v-slot:item.actions="{ item }">
+            <v-icon small @click="deleteProduct(item)"> mdi-delete </v-icon>
+          </template>
           <template v-slot:top>
             <template>
               <v-btn
                 color="primary"
-                class="mb-2"
+                class="ma-2"
                 @click="$router.push({ path: '/catalogo/producto' })"
                 :disabled="disableAdding"
               >
-                Add Product
+                Añadir Producto
               </v-btn>
             </template>
           </template>
@@ -75,6 +77,11 @@ export default {
           align: "right",
           value: "hide",
         },
+        {
+          text: "Acciones",
+          align: "right",
+          value: "actions",
+        },
       ];
     },
   },
@@ -86,6 +93,14 @@ export default {
       if (this.activeStore !== null) {
         this.$store.dispatch("bindProductsCollection");
       }
+    },
+    deleteProduct(product) {
+      this.$fire.firestore
+        .collection("stores")
+        .doc(this.activeStore.id)
+        .collection("products")
+        .doc(product.id)
+        .delete();
     },
   },
   watch: {
