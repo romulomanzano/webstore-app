@@ -86,8 +86,8 @@ export default {
           to: "/catalogo",
         },
         {
-          icon: "mdi-share-variant",
-          title: "Compartir",
+          icon: "mdi-qrcode-edit",
+          title: "Codigo QR ",
           to: "/sharing",
         },
       ],
