@@ -85,11 +85,6 @@ export default {
           title: "Catalogo",
           to: "/catalogo",
         },
-        {
-          icon: "mdi-qrcode-edit",
-          title: "Codigo QR ",
-          to: "/sharing",
-        },
       ],
       miniVariant: false,
       right: true,

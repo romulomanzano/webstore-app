@@ -16,6 +16,7 @@
         <v-tab :disabled="activeStore === null">Contacto</v-tab>
         <v-tab :disabled="activeStore === null">Envios</v-tab>
         <v-tab :disabled="activeStore === null">Personalizacion</v-tab>
+        <v-tab :disabled="activeStore === null">Codigo QR</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
@@ -33,6 +34,9 @@
         <v-tab-item>
           <brand-tab></brand-tab>
         </v-tab-item>
+        <v-tab-item>
+          <qr-code-tab></qr-code-tab>
+        </v-tab-item>
       </v-tabs-items>
     </template>
   </v-main>
@@ -45,10 +49,18 @@ import LinksTab from "@/components/store/LinksTab";
 import ContactTab from "@/components/store/ContactTab";
 import ShippingTab from "@/components/store/ShippingTab";
 import BrandTab from "@/components/store/BrandTab";
+import QrCodeTab from "@/components/store/QrCodeTab";
 
 export default {
   name: "home",
-  components: { GeneralTab, LinksTab, ContactTab, ShippingTab, BrandTab },
+  components: {
+    GeneralTab,
+    LinksTab,
+    ContactTab,
+    ShippingTab,
+    BrandTab,
+    QrCodeTab,
+  },
   data: () => ({
     tab: 0,
     ready: true,
