@@ -18,7 +18,7 @@
         :error-messages="invalidStoreDomain"
         @blur="$v.storeDetails.storeDomain.$touch()"
         prefix="https://"
-        suffix=".web.tienda"
+        suffix=".tienda.app"
       ></v-text-field>
       <v-textarea
         v-model="storeDetails.description"
@@ -228,7 +228,7 @@ export default {
     storeUrl() {
       return this.storeDetails.storeDomain !== "" &&
         !this.$v.storeDetails.storeName.$error
-        ? "https://" + this.storeDetails.storeDomain + ".web.tienda"
+        ? "https://" + this.storeDetails.storeDomain + ".tienda.app"
         : "";
     },
     invalidStoreName() {
