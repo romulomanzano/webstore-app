@@ -19,7 +19,7 @@
           <store-general-tab></store-general-tab>
         </v-tab-item>
         <v-tab-item>
-          <store-contact-tab></store-contact-tab>
+          <store-general-tab></store-general-tab>
         </v-tab-item>
       </v-tabs-items>
     </template>
@@ -27,33 +27,21 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import StoreGeneralTab from "@/components/store/StoreGeneralTab";
-import StoreContactTab from "@/components/store/StoreContactTab";
+import StoreGeneralTab from "@/components/storefront/StoreGeneralTab";
+//import StoreContactTab from "@/components/storefront/StoreContactTab";
 
 export default {
+  layout: "topsite",
   name: "tienda",
-  components: { StoreGeneralTab, StoreContactTab },
+  components: { StoreGeneralTab },
   data: () => ({
     tab: 0,
     ready: false,
   }),
-  computed: {
-    ...mapGetters({
-      storeFront: "storeFront",
-    }),
-  },
+  computed: {},
   methods: {},
   mounted() {
-    if (this.$route.params.id) {
-      this.$store
-        .dispatch("bindStoreFront", {
-          id: this.$route.params.name,
-        })
-        .then((this.ready = true));
-    } else {
-      console.log("redirect!");
-    }
+    this.ready = true;
   },
 };
 </script>
