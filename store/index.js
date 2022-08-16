@@ -92,7 +92,9 @@ export const actions = {
       .limit(1);
     await bindFirestoreRef("storeFront", storeRef, { wait: true });
     if (state.storeFront.length > 0) {
-      dispatch("bindStoreFrontProductsCollection", { id: state.storeFront[0].id });
+      dispatch("bindStoreFrontProductsCollection", {
+        id: state.storeFront[0].id,
+      });
     }
   }),
 

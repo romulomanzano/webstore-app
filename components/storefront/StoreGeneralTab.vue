@@ -12,7 +12,11 @@
 
     <v-container fluid>
       <v-row dense>
-        <v-col v-for="card in storeFrontProducts" :key="card.title" :cols="card.flex">
+        <v-col
+          v-for="card in storeFrontProducts"
+          :key="card.title"
+          :cols="card.flex"
+        >
           <v-card v-if="ready">
             <v-carousel height="200px">
               <v-carousel-item
@@ -92,7 +96,7 @@ export default {
   computed: {
     ...mapGetters({
       storeFront: "storeFront",
-      storeFrontProducts: "storeFrontProducts"
+      storeFrontProducts: "storeFrontProducts",
     }),
   },
   mounted() {
