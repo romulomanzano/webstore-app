@@ -42,5 +42,16 @@ export default {
       title: "Vuetify.js",
     };
   },
+  async beforeMount() {
+    if (this.$route.params.name) {
+      this.$store
+        .dispatch("bindStoreFrontDocument", {
+          name: this.$route.params.name,
+        })
+        .then(console.log("Store loaded"));
+    } else {
+      console.log("No store name");
+    }
+  },
 };
 </script>

@@ -3,9 +3,11 @@ import { vuexfireMutations, firestoreAction } from "vuexfire";
 export const state = () => ({
   user: null,
   products: [],
+  storeFrontProducts: [],
   userData: null,
   activeStore: null,
   activeProduct: null,
+  storeFront: null,
 });
 export const mutations = {
   ...vuexfireMutations,
@@ -33,6 +35,16 @@ export const actions = {
       .doc(state.activeStore.id)
       .collection("products");
     await bindFirestoreRef("products", ref, { wait: true });
+  }),
+  bindStoreFrontProductsCollection: firestoreAction(async function (
+    { state, bindFirestoreRef },
+    payload
+  ) {
+    const ref = this.$fire.firestore
+      .collection("stores")
+      .doc(payload.id)
+      .collection("products");
+    return bindFirestoreRef("storeFrontProducts", ref, { wait: true });
   }),
   onAuthStateChangedAction: ({ commit }, { authUser }) => {
     if (!authUser) {
@@ -69,6 +81,19 @@ export const actions = {
       .collection("stores")
       .doc(state.userData.stores[0].id);
     return bindFirestoreRef("activeStore", storeRef, { wait: true });
+  }),
+  bindStoreFrontDocument: firestoreAction(async function (
+    { state, dispatch, bindFirestoreRef },
+    payload
+  ) {
+    const storeRef = this.$fire.firestore
+      .collection("stores")
+      .where("storeDomain", "==", payload.name.toLocaleLowerCase())
+      .limit(1);
+    await bindFirestoreRef("storeFront", storeRef, { wait: true });
+    if (state.storeFront.length > 0) {
+      dispatch("bindStoreFrontProductsCollection", { id: state.storeFront[0].id });
+    }
   }),
 
   bindUserDataDocument: firestoreAction(async function ({
@@ -132,8 +157,18 @@ export const getters = {
   user(state) {
     return state.user;
   },
+  storeFront(state) {
+    if (state.storeFront === null || state.storeFront.length < 1) {
+      return null;
+    } else {
+      return state.storeFront[0];
+    }
+  },
   userData(state) {
     return state.userData;
+  },
+  storeFrontProducts(state) {
+    return state.storeFrontProducts;
   },
   isLoggedIn: (state) => {
     if (state.user === null) {

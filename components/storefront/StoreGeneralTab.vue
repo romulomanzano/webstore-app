@@ -12,13 +12,13 @@
 
     <v-container fluid>
       <v-row dense>
-        <v-col v-for="card in cards" :key="card.title" :cols="card.flex">
-          <v-card>
+        <v-col v-for="card in storeFrontProducts" :key="card.title" :cols="card.flex">
+          <v-card v-if="ready">
             <v-carousel height="200px">
               <v-carousel-item
-                v-for="(item, i) in card.items"
+                v-for="(item, i) in card.images"
                 :key="i"
-                :src="item.src"
+                :src="item.dataUrl"
                 reverse-transition="fade-transition"
                 transition="fade-transition"
               >
@@ -50,8 +50,11 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data: () => ({
+    ready: false,
     cards: [
       {
         title: "Pre-fab homes",
@@ -79,5 +82,23 @@ export default {
       },
     ],
   }),
+  watch: {
+    storeFront() {
+      if (this.storeFront !== null) {
+        this.ready = true;
+      }
+    },
+  },
+  computed: {
+    ...mapGetters({
+      storeFront: "storeFront",
+      storeFrontProducts: "storeFrontProducts"
+    }),
+  },
+  mounted() {
+    if (this.storeFront !== null) {
+      this.ready = true;
+    }
+  },
 };
 </script>
