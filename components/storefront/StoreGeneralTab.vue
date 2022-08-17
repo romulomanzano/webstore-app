@@ -27,6 +27,7 @@
                 transition="fade-transition"
                 :max-height="512"
                 :max-width="512"
+                :width="512"
               >
                 <v-card-title
                   v-text="card.title"
