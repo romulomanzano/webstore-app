@@ -18,13 +18,15 @@
           :cols="card.flex"
         >
           <v-card v-if="ready">
-            <v-carousel height="200px">
+            <v-carousel height="300px">
               <v-carousel-item
                 v-for="(item, i) in card.images"
                 :key="i"
                 :src="item.dataUrl"
                 reverse-transition="fade-transition"
                 transition="fade-transition"
+                :max-height="512"
+                :max-width="512"
               >
                 <v-card-title
                   v-text="card.title"
