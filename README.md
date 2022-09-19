@@ -1,6 +1,6 @@
-# nuxt-app-firebase
+# Web Store App
 
-Simple app that implements google login using Firebase, and adds products to firestore.
+Simple app that implements google login using Firebase, and adds products to firestore. Allows user to create products and upload images for their store.
 
 Leverages:
 
